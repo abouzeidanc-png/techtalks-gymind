@@ -13,114 +13,83 @@ GYMIND consists of:
 
 The long-term vision is to evolve GYMIND into an AI-powered fitness and location intelligence platform for gyms and users in Lebanon and the region.
 
-Problem Statement
+
+## Problem Statement
 
 Gym users often face:
-
-Overcrowded gyms without knowing peak hours
-
-Difficulty discovering nearby quality gyms
-
-Lack of personalized guidance and progress insights
+- Overcrowded gyms without knowing peak hours
+- Difficulty discovering nearby quality gyms
+- Lack of personalized guidance and progress insights
 
 Gym owners face:
-
-No real-time visibility into gym traffic
-
-Limited analytics on peak hours and member behavior
-
-Weak digital engagement with members
+- No real-time visibility into gym traffic
+- Limited analytics on peak hours and member behavior
+- Weak digital engagement with members
 
 GYMIND addresses these problems by providing real-time traffic tracking, smart discovery, personalized fitness tools, and business analytics.
 
-Planned Core Features (MVP)
-User Mobile App
 
-User onboarding and profile setup
+## Planned Core Features (MVP)
 
-Location-based gym discovery (map & list view)
+### User Mobile App
+- User onboarding and profile setup
+- Location-based gym discovery (map & list view)
+- Real-time gym traffic indicator (low / medium / high)
+- QR-based check-in and check-out
+- Virtual membership card
+- Basic activity dashboard
+- Push notifications from gyms
 
-Real-time gym traffic indicator (low / medium / high)
+### Gym Web Dashboard
+- Gym and branch management
+- Live active user count
+- Peak hours and daily traffic analytics
+- Notification and announcement system
 
-QR-based check-in and check-out
+### System Admin Panel
+- Gym approval and management
+- Platform monitoring
+- Global settings control
 
-Virtual membership card
 
-Basic activity dashboard
+## Future Phases
 
-Push notifications from gyms
+- Personalized training and diet plans
+- AI-powered fitness assistant
+- Smart gym time recommendations
+- E-commerce for supplements and fitness products
+- Location and market intelligence dashboards for business expansion
 
-Gym Web Dashboard
 
-Gym and branch management
 
-Live active user count
+## Tech Stack
+### Frontend
+- Web: React, TypeScript, Tailwind CSS, Vite
+- Mobile: React Native or .NET MAUI
 
-Peak hours and daily traffic analytics
+### Backend
+- ASP.NET Core (C#)
+- RESTful APIs
+- SignalR for real-time features
 
-Notification and announcement system
+### Database
+- PostgreSQL
 
-System Admin Panel
+### Tools & Services
+- Git & GitHub
+- Figma (UI/UX)
+- Postman (API testing)
+- Firebase / OneSignal (Push Notifications)
+- OpenStreetMap & Leaflet (Maps)
+- Docker (later for deployment)
 
-Gym approval and management
 
-Platform monitoring
+## Team
 
-Global settings control
+- Team Lead & Security: Hussein Kteish
+- Frontend Developers: All the team
+- Backend Developers: All the team
+- UI/UX Designer: All the team
+- Data & QA: All the team
 
-Future Phases
 
-Personalized training and diet plans
-
-AI-powered fitness assistant
-
-Smart gym time recommendations
-
-E-commerce for supplements and fitness products
-
-Location and market intelligence dashboards for business expansion
-
-Tech Stack
-Frontend
-
-Web: React, TypeScript, Tailwind CSS, Vite
-
-Mobile: React Native or .NET MAUI
-
-Backend
-
-ASP.NET Core (C#)
-
-RESTful APIs
-
-SignalR for real-time features
-
-Database
-
-PostgreSQL
-
-Tools & Services
-
-Git & GitHub
-
-Figma (UI/UX)
-
-Postman (API testing)
-
-Firebase / OneSignal (Push Notifications)
-
-OpenStreetMap & Leaflet (Maps)
-
-Docker (later for deployment)
-
-Team
-
-Team Lead & Security: Hussein Kteish
-
-Frontend Developers
-
-Backend Developers
-
-UI/UX Designer
-
-Data & QA
