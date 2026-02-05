@@ -1,0 +1,10 @@
+namespace GYMIND.API.GYMIND.DTOs
+{
+    public class AuthResponseDto
+    {
+        public string Token { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string FullName { get; set; } = null!;
+        public List<string> Roles { get; set; } = new();
+    }
+}
