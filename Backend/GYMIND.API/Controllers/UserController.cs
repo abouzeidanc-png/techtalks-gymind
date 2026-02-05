@@ -77,7 +77,11 @@ public class UsersController : ControllerBase
             Email = dto.Email,
             Phone = dto.Phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            RoleID = dto.RoleID,
+            DateOfBirth = dto.DateOfBirth.HasValue
+            ? DateTime.SpecifyKind(dto.DateOfBirth.Value, DateTimeKind.Utc) : null,
+
+            Location = dto.Location,
+            RoleID = 2, // => Default role as 'Member', Changed by admins through sqlqueries
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
@@ -89,7 +93,12 @@ public class UsersController : ControllerBase
         {
             user.UserID,
             user.FullName,
-            user.Email
+            user.Email,
+            user.Phone,
+            user.DateOfBirth,
+            user.Location,
+            user.RoleID,
+            user.CreatedAt
         });
     }
 

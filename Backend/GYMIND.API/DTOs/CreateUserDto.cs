@@ -6,6 +6,10 @@
         public string Email { get; set; } = null!;
         public string? Phone { get; set; }
         public string Password { get; set; } = null!;
-        public int RoleID { get; set; }
+
+        public string? Location { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+
+
     }
 }
