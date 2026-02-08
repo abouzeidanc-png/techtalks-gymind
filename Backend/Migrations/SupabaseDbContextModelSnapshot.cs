@@ -28,7 +28,8 @@ namespace GYMIND.API.Migrations
                 {
                     b.Property<Guid>("AnnouncementID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("announcementid");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -51,7 +52,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("GymBranchID");
 
-                    b.ToTable("Announcements");
+                    b.ToTable("announcements", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Gym", b =>
@@ -72,22 +73,25 @@ namespace GYMIND.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("GymId");
 
-                    b.ToTable("Gyms");
+                    b.ToTable("gyms", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymAdminAction", b =>
                 {
                     b.Property<Guid>("GymAdminActionID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymadminactionid");
 
                     b.Property<string>("ActionType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -97,11 +101,13 @@ namespace GYMIND.API.Migrations
 
                     b.Property<string>("Outcome")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("TargetEntity")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("TargetID")
                         .HasColumnType("uuid");
@@ -115,7 +121,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("GymAdminActions");
+                    b.ToTable("gymadminactions", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymBranch", b =>
@@ -153,7 +159,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("GymBranches");
+                    b.ToTable("gymbranches", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymSession", b =>
@@ -163,10 +169,12 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("CheckInLat")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)");
 
                     b.Property<decimal>("CheckInLong")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)");
 
                     b.Property<DateTime>("CheckInTime")
                         .HasColumnType("timestamp with time zone");
@@ -192,7 +200,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("GymSessions");
+                    b.ToTable("gymsessions", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Location", b =>
@@ -210,14 +218,16 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<decimal>("Latitude")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)");
 
                     b.Property<decimal>("Longitude")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)");
 
                     b.HasKey("LocationID");
 
-                    b.ToTable("Locations");
+                    b.ToTable("locations", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Membership", b =>
@@ -247,23 +257,21 @@ namespace GYMIND.API.Migrations
                     b.Property<Guid>("UserID")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserID1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("MembershipID");
 
                     b.HasIndex("GymID");
 
-                    b.HasIndex("UserID1");
+                    b.HasIndex("UserID");
 
-                    b.ToTable("Memberships");
+                    b.ToTable("memberships", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Notification", b =>
                 {
                     b.Property<Guid>("NotificationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("notificationid");
 
                     b.Property<Guid?>("GymBranchID")
                         .HasColumnType("uuid");
@@ -291,7 +299,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("notifications", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Role", b =>
@@ -323,11 +331,13 @@ namespace GYMIND.API.Migrations
                 {
                     b.Property<Guid>("SystemAdminActionID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("systemadminactionid");
 
                     b.Property<string>("ActionType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -338,7 +348,8 @@ namespace GYMIND.API.Migrations
 
                     b.Property<string>("TargetEntity")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("TargetID")
                         .HasColumnType("uuid");
@@ -350,7 +361,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("SystemAdminActions");
+                    b.ToTable("systemadminactions", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.TrafficTrack", b =>
@@ -360,7 +371,8 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("CapacityPercentage")
-                        .HasColumnType("numeric");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
 
                     b.Property<int>("EntryCount")
                         .HasColumnType("integer");
@@ -378,7 +390,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("GymBranchID");
 
-                    b.ToTable("TrafficTracks");
+                    b.ToTable("traffictrack", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.User", b =>
@@ -387,6 +399,11 @@ namespace GYMIND.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("userid");
+
+                    b.Property<string>("Biography")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("biography");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -401,14 +418,25 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email");
 
+                    b.Property<string>("EmergencyContact")
+                        .HasColumnType("text")
+                        .HasColumnName("emergencycontact");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("fullname");
 
                     b.Property<string>("Gender")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("gender");
+
+                    b.Property<bool>("HasChangedName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("haschangedname");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -419,6 +447,10 @@ namespace GYMIND.API.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("text")
                         .HasColumnName("location");
+
+                    b.Property<string>("MedicalConditions")
+                        .HasColumnType("text")
+                        .HasColumnName("medicalconditions");
 
                     b.Property<Guid?>("MembershipID")
                         .HasColumnType("uuid")
@@ -433,6 +465,10 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone");
 
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("profilepictureurl");
+
                     b.HasKey("UserID");
 
                     b.ToTable("users", (string)null);
@@ -442,48 +478,62 @@ namespace GYMIND.API.Migrations
                 {
                     b.Property<int>("UserNotificationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("usernotificationid");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserNotificationID"));
 
                     b.Property<Guid>("NotificationID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("notificationid");
 
                     b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("readat");
 
                     b.Property<bool>("ReadStatus")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("readstatus");
 
                     b.Property<Guid>("UserID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
                     b.HasKey("UserNotificationID");
 
                     b.HasIndex("NotificationID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID", "NotificationID")
+                        .IsUnique();
 
-                    b.ToTable("UserNotifications");
+                    b.ToTable("usernotification", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.UserRole", b =>
                 {
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uuid")
-                        .HasColumnName("userid");
+                    b.Property<int>("UserRoleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("userroleid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserRoleID"));
 
                     b.Property<int>("RoleID")
                         .HasColumnType("integer")
                         .HasColumnName("roleid");
 
-                    b.Property<int>("UserRoleID")
-                        .HasColumnType("integer")
-                        .HasColumnName("userroleid");
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("UserID", "RoleID");
+                    b.HasKey("UserRoleID");
 
                     b.HasIndex("RoleID");
+
+                    b.HasIndex("UserID", "RoleID")
+                        .IsUnique();
 
                     b.ToTable("userrole", (string)null);
                 });
@@ -566,7 +616,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasOne("GYMIND.API.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID1")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -5,6 +5,7 @@ using System.Data;
 
 public class User
 {
+    //Properties      
     public Guid UserID { get; set; }
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -14,11 +15,29 @@ public class User
     public string? Location { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public Guid? MembershipID { get; set; }
-    public string Gender { get; set; }
+    public string? Gender { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsActive { get; set; }
 
+    // new properties for profile
+    public string? Biography { get; set; }
+
+
+
+    [Column("profilepictureurl")]
+    public string? ProfilePictureUrl { get; set; }
     
+    
+    public bool HasChangedName { get; set; } = false;
+
+    public string? MedicalConditions { get; set; }
+    public string? EmergencyContact { get; set; }
+
+
+
+
+
+    // Navigation properties
     public ICollection<UserRole> UserRole { get; set; } = new List<UserRole>();
 }
 

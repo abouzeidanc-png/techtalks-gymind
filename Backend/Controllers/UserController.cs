@@ -1,7 +1,9 @@
 using GYMIND.API.DTOs;
 using GYMIND.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace GYMIND.API.Controllers
 {
@@ -70,6 +72,25 @@ namespace GYMIND.API.Controllers
             var success = await _userService.DeactivateUserAsync(id);
             if (!success) return NotFound();
             return NoContent();
+        }
+
+
+        [Authorize]
+        [HttpPatch("edit-profile")]
+        public async Task<IActionResult> EditProfile([FromForm] EditProfileDto dto)
+        {
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            try
+            {
+                await _userService.UpdateProfileAsync(userId, dto);
+                return Ok("Profile updated!");
+            }
+            catch (Exception ex)
+            {
+                // This will now return the specific "Storage Error" or "Database Error" message
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace GYMIND.API.Data.Configuration
             entity.HasIndex(un => new { un.UserID, un.NotificationID }).IsUnique();
 
             entity.HasOne(un => un.User)
-                .WithMany() // Assuming User doesn't have a navigation collection back
+                .WithMany() 
                 .HasForeignKey(un => un.UserID);
 
             entity.HasOne(un => un.Notification)

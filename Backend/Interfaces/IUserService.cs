@@ -13,6 +13,7 @@ namespace GYMIND.API.Interfaces
         Task<bool> UpdateUserAsync(Guid id, UpdateUserDto dto);
         Task<bool> DeactivateUserAsync(Guid id);
         Task<string?> LoginAsync(LoginRequestDto dto);
+        Task<bool> UpdateProfileAsync(Guid userId, EditProfileDto dto);
 
     }
 }

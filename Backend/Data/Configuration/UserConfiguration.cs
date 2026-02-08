@@ -1,9 +1,8 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace GYMIND.API.Data.Configuration
+    namespace GYMIND.API.Data.Configuration
 {
 
     public class UserConfiguration : IEntityTypeConfiguration<Entities.User>
@@ -20,7 +19,14 @@ namespace GYMIND.API.Data.Configuration
             entity.Property(u => u.Email).HasColumnName("email");
             entity.Property(u => u.Phone).HasColumnName("phone");
             entity.Property(u => u.PasswordHash).HasColumnName("passwordhash");
-
+            entity.Property(u => u.Biography)
+                .HasColumnName("biography")
+                .HasMaxLength(500); // new column
+            entity.Property(u => u.ProfilePictureUrl).HasColumnName("profilepictureurl");// new column
+            entity.Property(u => u.HasChangedName).HasDefaultValue(false).HasColumnName("haschangedname");// new column
+            entity.Property(u => u.MedicalConditions).HasColumnName("medicalconditions");// new column
+            entity.Property(u => u.EmergencyContact).HasColumnName("emergencycontact");// new column
+            
             entity.Property(u => u.Location).HasColumnName("location");
             entity.Property(u => u.DateOfBirth).HasColumnName("dateofbirth");
             entity.Property(u => u.MembershipID).HasColumnName("membershipid");

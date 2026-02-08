@@ -6,18 +6,20 @@ using GYMIND.API.Data;
 
 using BCrypt.Net;
 
-namespace GYMIND.API.GYMIND.Application.Service
+namespace GYMIND.API.Service
 {
 
     public class UserService : IUserService
     {
         private readonly SupabaseDbContext _context;
         private readonly ITokenService _tokenService;
+        private readonly Supabase.Client _supabase;
 
-        public UserService(SupabaseDbContext context, ITokenService tokenService)
+        public UserService(SupabaseDbContext context, ITokenService tokenService, Supabase.Client supabase)
         {
             _context = context;
             _tokenService = tokenService;
+            _supabase = supabase;
         }
 
         public async Task<string?> LoginAsync(LoginRequestDto dto)
@@ -66,7 +68,7 @@ namespace GYMIND.API.GYMIND.Application.Service
                 Email = user.Email,
                 Phone = user.Phone,
                 CreatedAt = user.CreatedAt,
-                Roles = user.UserRole.Select(ur => ur.RoleID).ToList()  
+                Roles = user.UserRole.Select(ur => ur.RoleID).ToList()
             };
         }
 
@@ -86,7 +88,7 @@ namespace GYMIND.API.GYMIND.Application.Service
                 DateOfBirth = dto.DateOfBirth.HasValue
                     ? DateTime.SpecifyKind(dto.DateOfBirth.Value, DateTimeKind.Utc) : null,
                 Location = dto.Location,
-                
+                Gender = dto.Gender,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -116,7 +118,7 @@ namespace GYMIND.API.GYMIND.Application.Service
                 Email = user.Email,
                 Phone = user.Phone,
                 CreatedAt = user.CreatedAt,
-                Roles = user.UserRole.Select(ur => ur.RoleID).ToList(),
+                Roles = user.UserRole.Select(ur => ur.RoleID).ToList(),  // remove this later when we have proper role management
             };
         }
 
@@ -145,7 +147,7 @@ namespace GYMIND.API.GYMIND.Application.Service
                     UserID = user.UserID
                 }).ToList();
             }
-                
+
 
             await _context.SaveChangesAsync();
             return true;
@@ -159,6 +161,60 @@ namespace GYMIND.API.GYMIND.Application.Service
             user.IsActive = false;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+
+        public async Task<bool> UpdateProfileAsync(Guid userId, EditProfileDto dto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            if (dto.ImageFile != null)
+            {
+                try
+                {
+                    // Keep your existing naming convention
+                    var fileName = $"{userId}/profilepictureurl_{DateTime.UtcNow.Ticks}.jpg";
+
+                    using var stream = new MemoryStream();
+                    await dto.ImageFile.CopyToAsync(stream);
+                    stream.Position = 0; // Ensure we are at the start of the file
+                    var fileBytes = stream.ToArray();
+
+                    // Perform the upload
+                    await _supabase.Storage
+                          .From("profilepictureurl")
+                          .Upload(fileBytes, fileName, new Supabase.Storage.FileOptions { Upsert = true });
+
+                    // Get the URL and assign it to your existing property
+                    var publicUrl = _supabase.Storage.From("profilepictureurl").GetPublicUrl(fileName);
+
+                    if (!string.IsNullOrEmpty(publicUrl))
+                    {
+                        user.ProfilePictureUrl = publicUrl; // This maps to your [Column("profilepictureurl")]
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // This will tell you if the 'profilepictureurl' bucket is missing or restricted
+                    throw new Exception($"Supabase Storage Error: {ex.Message}");
+                }
+            }
+
+            user.Biography = dto.Biography ?? user.Biography;
+            user.MedicalConditions = dto.MedicalConditions ?? user.MedicalConditions;
+            user.EmergencyContact = dto.EmergencyContact ?? user.EmergencyContact;
+
+            try
+            {
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Database Save Error: {ex.Message}");
+            }
         }
     }
 }

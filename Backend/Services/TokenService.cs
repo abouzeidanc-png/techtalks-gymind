@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Collections.Generic;
 
-namespace GYMIND.API.GYMIND.Application.Services
+namespace GYMIND.API.Services
 {
     // Standard TokenService responsible for generating JWT tokens for authenticated users
     public class TokenService : ITokenService

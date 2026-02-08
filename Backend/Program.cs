@@ -1,10 +1,14 @@
 using GYMIND.API.Interfaces;
-using GYMIND.API.GYMIND.Application.Service;
-using GYMIND.API.GYMIND.Application.Services;
+using GYMIND.API.Service;
+using GYMIND.API.Services;
 using GYMIND.API.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,6 +28,23 @@ builder.Services.AddDbContext<SupabaseDbContext>(options =>
         });
 });
 
+// jwt authentication configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            ValidateIssuer = true,
+            ValidIssuer = "GYMIND",
+            ValidateAudience = true,
+            ValidAudience = "GYMINDUsers",
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
 
 // Register Controllers
 builder.Services.AddControllers()
@@ -32,6 +53,16 @@ builder.Services.AddControllers()
         opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
+
+
+// supabase client configuration
+var supabaseUrl = builder.Configuration["Supabase:Url"];
+var supabaseKey = builder.Configuration["Supabase:Key"];
+
+builder.Services.AddScoped(_ => new Supabase.Client(supabaseUrl, supabaseKey));
+
+
+
 //Register Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -39,6 +70,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger/OpenAPI configuration
 builder.Services.AddEndpointsApiExplorer();
+
 
 
 
@@ -54,6 +86,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
