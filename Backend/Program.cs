@@ -1,8 +1,7 @@
-using GYMIND.API.Application.Interfaces;
-using GYMIND.API.GYMIND.Application.Interfaces;
+using GYMIND.API.Interfaces;
 using GYMIND.API.GYMIND.Application.Service;
 using GYMIND.API.GYMIND.Application.Services;
-using GYMIND.API.GYMIND.Infrastructure.Data;
+using GYMIND.API.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
