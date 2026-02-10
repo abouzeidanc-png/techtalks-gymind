@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GYMIND.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddExtendedProfileFields : Migration
+    public partial class AddTwoNewColumnsToUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,7 +24,7 @@ namespace GYMIND.API.Migrations
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
                     IsApproved = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,16 +70,18 @@ namespace GYMIND.API.Migrations
                     phone = table.Column<string>(type: "text", nullable: true),
                     passwordhash = table.Column<string>(type: "text", nullable: false),
                     location = table.Column<string>(type: "text", nullable: true),
-                    dateofbirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    dateofbirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     membershipid = table.Column<Guid>(type: "uuid", nullable: true),
-                    gender = table.Column<string>(type: "text", nullable: false),
-                    createdat = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    gender = table.Column<string>(type: "text", nullable: true),
+                    createdat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     isactive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     biography = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     profilepictureurl = table.Column<string>(type: "text", nullable: true),
                     haschangedname = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     medicalconditions = table.Column<string>(type: "text", nullable: true),
-                    emergencycontact = table.Column<string>(type: "text", nullable: true)
+                    emergencycontact = table.Column<string>(type: "text", nullable: true),
+                    refreshtoken = table.Column<string>(type: "text", nullable: true),
+                    refreshtokenexpiry = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -124,9 +126,9 @@ namespace GYMIND.API.Migrations
                     UserID = table.Column<Guid>(type: "uuid", nullable: false),
                     GymID = table.Column<Guid>(type: "uuid", nullable: false),
                     IsMember = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RemovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    RemovedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -155,7 +157,7 @@ namespace GYMIND.API.Migrations
                     ActionType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TargetEntity = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TargetID = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Outcome = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -203,8 +205,8 @@ namespace GYMIND.API.Migrations
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -227,7 +229,7 @@ namespace GYMIND.API.Migrations
                     ActionType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TargetEntity = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TargetID = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Outcome = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -254,8 +256,8 @@ namespace GYMIND.API.Migrations
                     GymSessionID = table.Column<Guid>(type: "uuid", nullable: false),
                     UserID = table.Column<Guid>(type: "uuid", nullable: false),
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: false),
-                    CheckInTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CheckOutTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CheckInTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CheckOutTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     SessionDuration = table.Column<int>(type: "integer", nullable: true),
                     CheckInLat = table.Column<decimal>(type: "numeric(18,6)", precision: 18, scale: 6, nullable: false),
                     CheckInLong = table.Column<decimal>(type: "numeric(18,6)", precision: 18, scale: 6, nullable: false),
@@ -287,7 +289,7 @@ namespace GYMIND.API.Migrations
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: true),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsRead = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -311,7 +313,7 @@ namespace GYMIND.API.Migrations
                 {
                     TrafficTrackID = table.Column<Guid>(type: "uuid", nullable: false),
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: false),
-                    TrafficTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TrafficTimestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CapacityPercentage = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: true),
                     EntryCount = table.Column<int>(type: "integer", nullable: false),
                     IsRead = table.Column<bool>(type: "boolean", nullable: true)
@@ -336,7 +338,7 @@ namespace GYMIND.API.Migrations
                     userid = table.Column<Guid>(type: "uuid", nullable: false),
                     notificationid = table.Column<Guid>(type: "uuid", nullable: false),
                     readstatus = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    readat = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    readat = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,6 +1,8 @@
 using GYMIND.API.Interfaces;
 using GYMIND.API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace GYMIND.API.Controllers
 {
@@ -26,10 +28,41 @@ namespace GYMIND.API.Controllers
             if (token == null)
                 return Unauthorized("Invalid credentials.");
 
-            return Ok(new
-            {
-                token
-            });
+            return Ok(new { token });
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] CreateUserDto dto)
+        {
+            try
+            {
+                var user = await _userService.CreateUserAsync(dto);
+
+                // Points to the GetUser endpoint in the UsersController
+                return CreatedAtAction("GetUser", "Users", new { id = user.UserID }, user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RokenExchangeRequestDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.Token) || string.IsNullOrEmpty(dto.RefreshToken))
+                return BadRequest("Invalid client request");
+
+            var response = await _userService.RefreshTokenAsync(dto.Token, dto.RefreshToken);
+
+            if (response == null)
+                return Unauthorized("Invalid or expired session.");
+
+            return Ok(response);
+        }
+
+
     }
 }

@@ -21,19 +21,14 @@ public class User
 
     // new properties for profile
     public string? Biography { get; set; }
-
-
-
-    [Column("profilepictureurl")]
     public string? ProfilePictureUrl { get; set; }
-    
-    
     public bool HasChangedName { get; set; } = false;
-
     public string? MedicalConditions { get; set; }
     public string? EmergencyContact { get; set; }
 
-
+    // tokens
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiry { get; set; }
 
 
 

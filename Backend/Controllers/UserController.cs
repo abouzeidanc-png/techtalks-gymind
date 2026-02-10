@@ -2,7 +2,6 @@ using GYMIND.API.DTOs;
 using GYMIND.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace GYMIND.API.Controllers
@@ -48,24 +47,24 @@ namespace GYMIND.API.Controllers
             }
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
-        {
-            var token = await _userService.LoginAsync(dto);
-            if (token == null) return Unauthorized("Invalid email or passowrd.");
-            return Ok(new { token });
 
+        // This endpoint is specifically for admins to update any user's details, including roles.
+        // Regular users will use the EditProfile endpoint to update their own information.
+        [Authorize(Roles = "Admin")] 
+        [HttpPut("admin/update-user/{id:guid}")]
+        public async Task<IActionResult> AdminUpdateUser(Guid id, [FromBody] UpdateUserDto dto)
+        {
+            // The logic inside stays the same as your existing UpdateUserAsync
+            var success = await _userService.UpdateUserAsync(id, dto);
+
+            if (!success)
+                return NotFound("User not found or is inactive.");
+
+            return Ok(new { message = "User updated successfully by admin." });
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDto dto)
-        {
-            var success = await _userService.UpdateUserAsync(id,
-                                                             dto);
-            if (!success) return NotFound();
-            return NoContent();
-        }
-
+        
+        
         [HttpPut("{id:guid}/deactivate")]
         public async Task<IActionResult> DeactivateUser(Guid id)
         {
@@ -88,7 +87,7 @@ namespace GYMIND.API.Controllers
             }
             catch (Exception ex)
             {
-                // This will now return the specific "Storage Error" or "Database Error" message
+                
                 return BadRequest(ex.Message);
             }
         }

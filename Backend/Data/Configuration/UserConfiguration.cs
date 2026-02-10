@@ -26,7 +26,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
             entity.Property(u => u.HasChangedName).HasDefaultValue(false).HasColumnName("haschangedname");// new column
             entity.Property(u => u.MedicalConditions).HasColumnName("medicalconditions");// new column
             entity.Property(u => u.EmergencyContact).HasColumnName("emergencycontact");// new column
-            
+            entity.Property(u => u.RefreshToken).HasColumnName("refreshtoken");// new column
+            entity.Property(u => u.RefreshTokenExpiry).HasColumnName("refreshtokenexpiry");// new column
+
             entity.Property(u => u.Location).HasColumnName("location");
             entity.Property(u => u.DateOfBirth).HasColumnName("dateofbirth");
             entity.Property(u => u.MembershipID).HasColumnName("membershipid");

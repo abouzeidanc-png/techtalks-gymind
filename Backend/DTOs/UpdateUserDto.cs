@@ -2,11 +2,11 @@
 
 namespace GYMIND.API.DTOs
 {
+    // For admins to assign roles to users
     public class UpdateUserDto // edit later for stricter validation
     {
-        [Required]
         public string? FullName { get; set; }
-
+        
         public string? Phone { get; set; }
 
 

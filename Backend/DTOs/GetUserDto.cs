@@ -1,6 +1,6 @@
 ﻿namespace GYMIND.API.DTOs
 {
-    public class UserResponseDto
+    public class GetUserDto
     {
         public Guid UserID { get; set; }
         public string FullName { get; set; } = null!;

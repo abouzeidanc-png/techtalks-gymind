@@ -4,6 +4,7 @@ namespace GYMIND.API.Interfaces
 {
     public interface ITokenService
     {
-        public string CreateToken(User user, IEnumerable<UserRole> userRoles);
+        string CreateToken(User user, IEnumerable<UserRole> userRoles);
+        Guid GetUserIdFromExpiredToken(string token);
     }
 }

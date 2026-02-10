@@ -10,6 +10,7 @@ namespace GYMIND.API.Data.Configuration
             entity.ToTable("gyms");
             entity.HasKey(g => g.GymId);
             entity.Property(g => g.Name).HasMaxLength(255).IsRequired();
+            
         }
     }
 
@@ -24,7 +25,7 @@ namespace GYMIND.API.Data.Configuration
             entity.Property(gb => gb.OperatingHours).HasColumnType("jsonb");
 
             entity.HasOne(gb => gb.Gym)
-                .WithMany()
+                .WithMany(g => g.Branches) 
                 .HasForeignKey(gb => gb.GymID);
 
             entity.HasOne(gb => gb.Location)

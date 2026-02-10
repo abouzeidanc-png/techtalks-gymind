@@ -4,6 +4,7 @@ using System.Text.Json;
 using GYMIND.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GYMIND.API.Migrations
 {
     [DbContext(typeof(SupabaseDbContext))]
-    partial class SupabaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209211300_AddTwoNewColumnsToUser")]
+    partial class AddTwoNewColumnsToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,10 +39,10 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GymBranchID")
                         .HasColumnType("uuid");
@@ -66,7 +69,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
@@ -94,7 +97,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GymBranchID")
                         .HasColumnType("uuid");
@@ -177,10 +180,10 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("numeric(18,6)");
 
                     b.Property<DateTime>("CheckInTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("CheckOutTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GymBranchID")
                         .HasColumnType("uuid");
@@ -240,7 +243,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExpiryDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GymID")
                         .HasColumnType("uuid");
@@ -249,10 +252,10 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("RemovedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uuid");
@@ -284,7 +287,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -340,7 +343,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Outcome")
                         .IsRequired()
@@ -384,7 +387,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("TrafficTimestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("TrafficTrackID");
 
@@ -406,11 +409,11 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("biography");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("createdat");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("dateofbirth");
 
                     b.Property<string>("Email")
@@ -428,7 +431,6 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("fullname");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("gender");
 
@@ -469,6 +471,14 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("text")
                         .HasColumnName("profilepictureurl");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text")
+                        .HasColumnName("refreshtoken");
+
+                    b.Property<DateTime?>("RefreshTokenExpiry")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("refreshtokenexpiry");
+
                     b.HasKey("UserID");
 
                     b.ToTable("users", (string)null);
@@ -488,7 +498,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("notificationid");
 
                     b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("readat");
 
                     b.Property<bool>("ReadStatus")
