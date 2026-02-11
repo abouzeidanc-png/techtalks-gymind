@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GYMIND.API.DTOs
 {
-    public class EditProfileDto
+    public record EditProfileDto
     {
         [StringLength(100)]
         public string? FullName { get; set; }

@@ -15,6 +15,10 @@ namespace GYMIND.API.Service
         private readonly ITokenService _tokenService;
         private readonly Supabase.Client _supabase;
 
+        // The UserService is responsible for handling all user-related operations, including authentication,
+        // profile management, and role assignments. It interacts with the database through the SupabaseDbContext
+        // and manages JWT tokens using the ITokenService. Additionally, it integrates with Supabase Storage for
+        // handling profile picture uploads.
         public UserService(SupabaseDbContext context, ITokenService tokenService, Supabase.Client supabase)
         {
             _context = context;
@@ -35,7 +39,7 @@ namespace GYMIND.API.Service
 
         }
 
-        public async Task<AuthResponseDto?> RefreshTokenAsync(string expiredToken, string refreshToken)
+        public async Task<TokenExchangeRequestDto?> RefreshTokenAsync(string expiredToken, string refreshToken)
         {
             // Validate the expired token and get the UserID (using TokenService helper)
             var userId = _tokenService.GetUserIdFromExpiredToken(expiredToken);
@@ -55,7 +59,7 @@ namespace GYMIND.API.Service
             user.RefreshToken = newRefreshToken;
             await _context.SaveChangesAsync();
 
-            return new AuthResponseDto
+            return new TokenExchangeRequestDto
             {
                 Token = newAccessToken,
                 RefreshToken = newRefreshToken,
@@ -63,7 +67,7 @@ namespace GYMIND.API.Service
             };
         }
 
-        public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto)
+        public async Task<TokenExchangeRequestDto?> LoginAsync(LoginRequestDto dto)
         {
             var user = await _context.Users
                 .Include(u => u.UserRole).ThenInclude(ur => ur.Role)
@@ -83,7 +87,7 @@ namespace GYMIND.API.Service
             user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             await _context.SaveChangesAsync();
 
-            return new AuthResponseDto
+            return new TokenExchangeRequestDto
             {
                 Token = accessToken,
                 RefreshToken = refreshToken, 

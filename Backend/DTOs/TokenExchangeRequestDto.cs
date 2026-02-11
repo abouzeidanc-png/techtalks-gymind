@@ -1,6 +1,6 @@
 namespace GYMIND.API.DTOs
 {
-    public class AuthResponseDto
+    public record TokenExchangeRequestDto
     {
         public string Token { get; set; } = null!;
         public string RefreshToken { get; set; } = null!; 
