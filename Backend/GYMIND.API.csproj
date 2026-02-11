@@ -22,10 +22,13 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="Supabase" Version="1.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.2" />
+<<<<<<< HEAD
+=======
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+>>>>>>> 5dea1d11b23312e05041b57dfe4e05464c0d62f6
   </ItemGroup>
 
 </Project>
