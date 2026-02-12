@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GYMIND.API.DTOs
 {
-    public class LoginRequestDto
+    public record LoginRequestDto
     {
         [Required]
         public string Email { get; set; } = string.Empty;

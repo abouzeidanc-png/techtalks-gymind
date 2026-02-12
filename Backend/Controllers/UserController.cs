@@ -85,7 +85,7 @@ namespace GYMIND.API.Controllers
                 await _userService.UpdateProfileAsync(userId, dto);
                 return Ok("Profile updated!");
             }
-            catch (Exception ex)
+            catch (Exception ex) // to be edited to catch specific exceptions like ValidationException, etc.
             {
                 
                 return BadRequest(ex.Message);

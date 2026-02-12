@@ -1,6 +1,6 @@
 ﻿
 using GYMIND.API.DTOs;
-using Microsoft.AspNetCore.Identity.Data;
+
 
 
 namespace GYMIND.API.Interfaces
@@ -12,9 +12,12 @@ namespace GYMIND.API.Interfaces
         Task<GetUserDto> CreateUserAsync(CreateUserDto dto);
         Task<bool> UpdateUserAsync(Guid id, UpdateUserDto dto);
         Task<bool> DeactivateUserAsync(Guid id);
-        Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto);
+
+        Task<TokenExchangeRequestDto?> LoginAsync(LoginRequestDto dto);
         Task<bool> UpdateProfileAsync(Guid userId, EditProfileDto dto);
-        Task<AuthResponseDto?> RefreshTokenAsync(string token, string refeshToken);
+        Task<TokenExchangeRequestDto?> RefreshTokenAsync(string token, string refeshToken);
+
+        
 
 
     }

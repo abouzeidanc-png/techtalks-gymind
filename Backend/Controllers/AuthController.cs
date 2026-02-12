@@ -50,7 +50,10 @@ namespace GYMIND.API.Controllers
         [Authorize]
         
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] AuthResponseDto dto)
+
+        public async Task<IActionResult> Refresh([FromBody] TokenExchangeRequestDto dto)
+
+        
         {
             if (string.IsNullOrEmpty(dto.Token) || string.IsNullOrEmpty(dto.RefreshToken))
                 return BadRequest("Invalid client request");

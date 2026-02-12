@@ -2,7 +2,7 @@
 
 namespace GYMIND.API.DTOs
 {
-    public class CreateUserDto
+    public record CreateUserDto
     {
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;

@@ -41,7 +41,7 @@ namespace GYMIND.API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(7), // to be changed in production to 15-60 minutes
                 SigningCredentials = creds,
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"]
