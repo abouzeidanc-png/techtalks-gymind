@@ -32,7 +32,7 @@ namespace GYMIND.API.Controllers
             return Ok(gym);
         }
 
-        [HttpGet("name/{name:string}")]
+        [HttpGet("name/{name}")]
         public async Task<IActionResult> GetGymByName(string name)
         {
             var gym = await _gymService.GetGymByNameAsync(name);
@@ -42,7 +42,7 @@ namespace GYMIND.API.Controllers
             return Ok(gym);
         }
 
-        [HttpGet("address/{address:string}")]
+        [HttpGet("address/{address}")]
         public async Task<IActionResult> GetGymByAddress(string address)
         {
             var gyms = await _gymService.GetGymsByAddressAsync(address);
@@ -57,6 +57,16 @@ namespace GYMIND.API.Controllers
         {
             var createdGym = await _gymService.CreateGymAsync(dto);
             return CreatedAtAction(nameof(GetGym), new { id = createdGym.GymId }, createdGym);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateGym(Guid id, [FromBody] GymDto dto)
+        {
+            var success = await _gymService.UpdateGymAsync(id, dto);
+            if (!success)
+                return NotFound();
+
+            return NoContent();
         }
 
     }
