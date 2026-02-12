@@ -12,9 +12,12 @@ namespace GYMIND.API.Interfaces
         Task<GetUserDto> CreateUserAsync(CreateUserDto dto);
         Task<bool> UpdateUserAsync(Guid id, UpdateUserDto dto);
         Task<bool> DeactivateUserAsync(Guid id);
+
         Task<TokenExchangeRequestDto?> LoginAsync(LoginRequestDto dto);
         Task<bool> UpdateProfileAsync(Guid userId, EditProfileDto dto);
         Task<TokenExchangeRequestDto?> RefreshTokenAsync(string token, string refeshToken);
+
+        
 
 
     }
