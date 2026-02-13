@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace GYMIND.API.DTOs
 {
-    public class GymBranchDto
+    public record GymBranchDto
     {
         public Guid GymBranchID { get; set; }
         public Guid GymID { get; set; }
@@ -14,7 +14,7 @@ namespace GYMIND.API.DTOs
         public bool IsActive { get; set; }
     }
 
-    public class GymDto
+    public record GymDto
     {
         public Guid GymId { get; set; }
         public string Name { get; set; } = null!;

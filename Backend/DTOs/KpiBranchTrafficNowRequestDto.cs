@@ -1,6 +1,6 @@
 namespace GYMIND.API.DTOs
 {
-    public class KpiBranchTrafficNowRequestDto
+    public record KpiBranchTrafficNowRequestDto
     {
         public Guid GymBranchId { get; set; }
     }
