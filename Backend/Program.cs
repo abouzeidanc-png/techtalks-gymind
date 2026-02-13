@@ -70,6 +70,7 @@ builder.Services.AddScoped(_ => new Supabase.Client(supabaseUrl, supabaseKey));
 //Register Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IGymSessionService, GymSessionService>();
 
 
 // Swagger/OpenAPI configuration

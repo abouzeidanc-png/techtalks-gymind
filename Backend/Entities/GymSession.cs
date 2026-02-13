@@ -6,7 +6,7 @@
         public Guid UserID { get; set; }
         public Guid GymBranchID { get; set; }
         public DateTime CheckInTime { get; set; }
-        public DateTime? CheckOutTime { get; set; }
+        public DateTime CheckOutTime { get; set; }
         public int? SessionDuration { get; set; } // Duration in minutes
         public decimal CheckInLat { get; set; }
         public decimal CheckInLong { get; set; }
