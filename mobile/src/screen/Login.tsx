@@ -14,8 +14,8 @@ import type { RootStackParamList } from "../navigation/types";
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function Login({ navigation }: Props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [focused, setFocused] = useState<"email" | "password" | null>(null);
 
   return (

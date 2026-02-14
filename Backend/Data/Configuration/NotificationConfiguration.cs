@@ -7,7 +7,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.Notification> entity)
         {
-            entity.ToTable("notifications");
+            entity.ToTable("notification");
             entity.HasKey(n => n.NotificationID);
             entity.Property(n => n.NotificationID).HasColumnName("notificationid");
             entity.Property(n => n.UserID).HasColumnName("userid");
