@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
         public void Configure(EntityTypeBuilder<Entities.User> entity)
         {
 
-            entity.ToTable("users"); // map to table
+            entity.ToTable("user"); // map to table
             entity.HasKey(u => u.UserID); // primary key
 
             // Columns

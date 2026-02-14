@@ -62,7 +62,7 @@ namespace GYMIND.API.Services
 
         private bool IsGymOpen(JsonDocument operatingHours)
         {
-            // 1. Check if the JsonDocument itself is null (this IS a class, so it can be null)
+            // 1. Check if the JsonDocument itself is null 
             if (operatingHours == null) return true;
 
             var now = DateTime.UtcNow;
@@ -91,7 +91,7 @@ namespace GYMIND.API.Services
                             return currentTime >= openTime && currentTime <= closeTime;
                         }
 
-                        // Overnight hours logic (e.g., Open 18:00, Close 04:00)
+                        // Overnight hours logic 
                         return currentTime >= openTime || currentTime <= closeTime;
                     }
                 }
@@ -107,11 +107,10 @@ namespace GYMIND.API.Services
             // Implementation for ending a gym session, including calculating session duration and updating the GymSession record
             // 1. Find active session for user
             var session = await _context.GymSessions
-                .Where(gs => gs.UserID == userId && gs.CheckOutTime == null)
+                .Where(gs => gs.UserID == userId && gs.CheckOutTime == DateTime.MinValue)
                 .FirstOrDefaultAsync();
             if (session == null) return false;
 
-            
             DateTime finishTime = DateTime.UtcNow;
 
             session.CheckOutTime = finishTime;

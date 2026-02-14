@@ -4,6 +4,7 @@
     {
         public Guid NotificationID { get; set; }
         public Guid? UserID { get; set; }
+        public Guid? GymID { get; set; }
         public Guid? GymBranchID { get; set; }
         public string Title { get; set; } = null!;
         public string Message { get; set; } = null!;
@@ -12,5 +13,7 @@
 
         public User? User { get; set; }
         public GymBranch? GymBranch { get; set; }
+
+        public Gym? Gym { get; set; }
     }
 }

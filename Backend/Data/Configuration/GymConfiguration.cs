@@ -7,7 +7,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.Gym> entity)
         {
-            entity.ToTable("gyms");
+            entity.ToTable("gym");
             entity.HasKey(g => g.GymId);
             entity.Property(g => g.Name).HasMaxLength(255).IsRequired();
             
@@ -18,7 +18,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.GymBranch> entity)
         {
-            entity.ToTable("gymbranches");
+            entity.ToTable("gymbranch");
             entity.HasKey(gb => gb.GymBranchID);
 
             // Mapping JsonDocument for OperatingHours
