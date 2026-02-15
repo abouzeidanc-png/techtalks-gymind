@@ -7,15 +7,23 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.Membership> entity)
         {
-            entity.ToTable("memberships");
+            entity.ToTable("membership");
             entity.HasKey(m => m.MembershipID);
-            entity.Property(n => n.GymBranchID).HasColumnName("gymbranchid");
+                //Add Gym relationship + map columns
+            entity.Property(m => m.MembershipID).HasColumnName("membershipid");
+            entity.Property(m => m.UserID).HasColumnName("userid");
+            entity.Property(m => m.GymID).HasColumnName("gymid");
+            entity.Property(m => m.IsMember).HasColumnName("ismember");
+            entity.Property(m => m.JoinedAt).HasColumnName("joinedat");
+            entity.Property(m => m.RemovedAt).HasColumnName("removedat");
 
             entity.HasOne(m => m.User)
                 .WithMany()
                 .HasForeignKey(m => m.UserID);
 
-            entity.HasIndex(m => m.GymID);
+            entity.HasOne(m => m.Gym)
+                .WithMany()
+                .HasForeignKey(m => m.GymID);
         }
     }
 }

@@ -7,12 +7,15 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.Notification> entity)
         {
-            entity.ToTable("notifications");
+            entity.ToTable("notification");
             entity.HasKey(n => n.NotificationID);
             entity.Property(n => n.NotificationID).HasColumnName("notificationid");
             entity.Property(n => n.UserID).HasColumnName("userid");
             entity.Property(n => n.GymId).HasColumnName("gymid");
             entity.Property(n => n.GymBranchID).HasColumnName("gymbranchid");
+            entity.Property(n => n.Message).HasColumnName("message");
+            entity.Property(n => n.SentAt).HasColumnName("sentat");
+            entity.Property(n => n.Title).HasColumnName("title");
 
             // Optional relationships (Guid?)
             entity.HasOne(n => n.User).WithMany().HasForeignKey(n => n.UserID).IsRequired(false);
