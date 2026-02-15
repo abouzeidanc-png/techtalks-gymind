@@ -5,6 +5,7 @@
         public Guid MembershipID { get; set; }
         public Guid UserID { get; set; }
         public Guid GymID { get; set; }
+        public Guid GymBranchID { get; set; }
         public bool IsMember { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public DateTime JoinedAt { get; set; }
@@ -13,5 +14,7 @@
 
         public User User { get; set; } = null!;
         public Gym Gym { get; set; } = null!;
+
+        public GymBranch GymBranch { get; set; } = null!;
     }
 }
