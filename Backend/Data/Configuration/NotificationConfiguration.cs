@@ -13,8 +13,10 @@ namespace GYMIND.API.Data.Configuration
             entity.Property(n => n.UserID).HasColumnName("userid");
             entity.Property(n => n.GymID).HasColumnName("gymid");
             entity.Property(n => n.GymBranchID).HasColumnName("gymbranchid");
+            entity.Property(n => n.SentAt).HasColumnName("sentat");
             entity.Property(n => n.Title).HasColumnName("title").IsRequired().HasMaxLength(200);
             entity.Property(n => n.Message).HasColumnName("message").IsRequired().HasMaxLength(500);
+
 
 
             // relationships (Guid?)
