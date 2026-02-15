@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GYMIND.API.Controllers
 {
     [ApiController]
-    [Route("api/gyms")]
+    [Route("api/[controller]")]
     public class GymController : ControllerBase
     {
         private readonly IGymService _gymService;
@@ -33,7 +33,7 @@ namespace GYMIND.API.Controllers
             return Ok(gym);
         }
 
-        [HttpGet("name")]
+        [HttpGet("{name}")]
         public async Task<IActionResult> GetGymByName(string name)
         {
             var gym = await _gymService.GetGymByNameAsync(name);
@@ -43,7 +43,7 @@ namespace GYMIND.API.Controllers
             return Ok(gym);
         }
 
-        [HttpGet("address")]
+        [HttpGet("address/{address}")]
         public async Task<IActionResult> GetGymByAddress(string address)
         {
             var gyms = await _gymService.GetGymsByAddressAsync(address);
@@ -69,6 +69,33 @@ namespace GYMIND.API.Controllers
 
             return NoContent();
         }
+
+        //ApproveGym
+
+        // CreateBranchAsync
+        [HttpPost("{gymId:guid}/branches")]
+        public async Task<IActionResult> CreateBranch(Guid gymId, [FromBody] GymBranchDto dto)
+        {
+            var branch = await _gymService.CreateBranchAsync(gymId, dto);
+
+            return CreatedAtAction(
+                nameof(CreateBranch),
+                new { gymId = gymId },
+                branch
+            );
+        }
+        
+        // UpdateBranchAsync
+        [HttpPut("branches/{branchId:guid}")]
+        public async Task<IActionResult> UpdateBranch(Guid branchId, [FromBody] GymBranchDto dto)
+        {
+            var success = await _gymService.UpdateBranchAsync(branchId, dto);
+            if (!success)
+                return NotFound();
+
+            return NoContent();
+        }
+
 
     }
 }
