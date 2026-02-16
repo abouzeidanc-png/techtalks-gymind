@@ -31,7 +31,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
             entity.Property(u => u.Location).HasColumnName("location");
             entity.Property(u => u.DateOfBirth).HasColumnName("dateofbirth");
-            entity.Property(u => u.MembershipID).HasColumnName("membershipid");
+            // entity.Property(u => u.MembershipID).HasColumnName("membershipid");
             entity.Property(u => u.Gender).HasColumnName("gender");
             entity.Property(u => u.CreatedAt).HasColumnName("createdat");
             entity.Property(u => u.IsActive).HasColumnName("isactive").HasDefaultValue(true);

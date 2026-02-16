@@ -30,7 +30,7 @@ namespace GYMIND.API.Services
 
             if (branch == null) return false;
 
-            if (!IsGymOpen(branch.OperatingHours))
+            if (!IsGymOpen(branch.OpeningHours))
             {
                 return false;
             }

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GYMIND.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTwoNewColumnsToUser : Migration
+    public partial class fixedschema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,18 +17,18 @@ namespace GYMIND.API.Migrations
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
-                name: "gyms",
+                name: "gym",
                 columns: table => new
                 {
-                    GymId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    IsApproved = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    gymid = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    isapproved = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    createdat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_gyms", x => x.GymId);
+                    table.PrimaryKey("PK_gym", x => x.gymid);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,7 +47,7 @@ namespace GYMIND.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "roles",
+                name: "role",
                 columns: table => new
                 {
                     roleid = table.Column<int>(type: "integer", nullable: false)
@@ -57,11 +57,11 @@ namespace GYMIND.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_roles", x => x.roleid);
+                    table.PrimaryKey("PK_role", x => x.roleid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "user",
                 columns: table => new
                 {
                     userid = table.Column<Guid>(type: "uuid", nullable: false),
@@ -71,7 +71,7 @@ namespace GYMIND.API.Migrations
                     passwordhash = table.Column<string>(type: "text", nullable: false),
                     location = table.Column<string>(type: "text", nullable: true),
                     dateofbirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    membershipid = table.Column<Guid>(type: "uuid", nullable: true),
+                    MembershipID = table.Column<Guid>(type: "uuid", nullable: true),
                     gender = table.Column<string>(type: "text", nullable: true),
                     createdat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     isactive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
@@ -85,66 +85,36 @@ namespace GYMIND.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.userid);
+                    table.PrimaryKey("PK_user", x => x.userid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "gymbranches",
+                name: "gymbranch",
                 columns: table => new
                 {
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: false),
-                    GymID = table.Column<Guid>(type: "uuid", nullable: false),
-                    LocationID = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    gymid = table.Column<Guid>(type: "uuid", nullable: false),
+                    locationid = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     OperatingHours = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    ServiceDescription = table.Column<string>(type: "text", nullable: true),
-                    CoverImageUrl = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    servicedescription = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    coverimageurl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    isactive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_gymbranches", x => x.GymBranchID);
+                    table.PrimaryKey("PK_gymbranch", x => x.GymBranchID);
                     table.ForeignKey(
-                        name: "FK_gymbranches_gyms_GymID",
-                        column: x => x.GymID,
-                        principalTable: "gyms",
-                        principalColumn: "GymId",
+                        name: "FK_gymbranch_gym_gymid",
+                        column: x => x.gymid,
+                        principalTable: "gym",
+                        principalColumn: "gymid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_gymbranches_locations_LocationID",
-                        column: x => x.LocationID,
+                        name: "FK_gymbranch_locations_locationid",
+                        column: x => x.locationid,
                         principalTable: "locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "memberships",
-                columns: table => new
-                {
-                    MembershipID = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserID = table.Column<Guid>(type: "uuid", nullable: false),
-                    GymID = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsMember = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    JoinedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    RemovedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_memberships", x => x.MembershipID);
-                    table.ForeignKey(
-                        name: "FK_memberships_gyms_GymID",
-                        column: x => x.GymID,
-                        principalTable: "gyms",
-                        principalColumn: "GymId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_memberships_users_UserID",
-                        column: x => x.UserID,
-                        principalTable: "users",
-                        principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -164,9 +134,9 @@ namespace GYMIND.API.Migrations
                 {
                     table.PrimaryKey("PK_systemadminactions", x => x.systemadminactionid);
                     table.ForeignKey(
-                        name: "FK_systemadminactions_users_UserID",
+                        name: "FK_systemadminactions_user_UserID",
                         column: x => x.UserID,
-                        principalTable: "users",
+                        principalTable: "user",
                         principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -184,21 +154,21 @@ namespace GYMIND.API.Migrations
                 {
                     table.PrimaryKey("PK_userrole", x => x.userroleid);
                     table.ForeignKey(
-                        name: "FK_userrole_roles_roleid",
+                        name: "FK_userrole_role_roleid",
                         column: x => x.roleid,
-                        principalTable: "roles",
+                        principalTable: "role",
                         principalColumn: "roleid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_userrole_users_userid",
+                        name: "FK_userrole_user_userid",
                         column: x => x.userid,
-                        principalTable: "users",
+                        principalTable: "user",
                         principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "announcements",
+                name: "announcement",
                 columns: table => new
                 {
                     announcementid = table.Column<Guid>(type: "uuid", nullable: false),
@@ -210,17 +180,17 @@ namespace GYMIND.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_announcements", x => x.announcementid);
+                    table.PrimaryKey("PK_announcement", x => x.announcementid);
                     table.ForeignKey(
-                        name: "FK_announcements_gymbranches_GymBranchID",
+                        name: "FK_announcement_gymbranch_GymBranchID",
                         column: x => x.GymBranchID,
-                        principalTable: "gymbranches",
+                        principalTable: "gymbranch",
                         principalColumn: "GymBranchID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "gymadminactions",
+                name: "gymadminaction",
                 columns: table => new
                 {
                     gymadminactionid = table.Column<Guid>(type: "uuid", nullable: false),
@@ -234,30 +204,30 @@ namespace GYMIND.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_gymadminactions", x => x.gymadminactionid);
+                    table.PrimaryKey("PK_gymadminaction", x => x.gymadminactionid);
                     table.ForeignKey(
-                        name: "FK_gymadminactions_gymbranches_GymBranchID",
+                        name: "FK_gymadminaction_gymbranch_GymBranchID",
                         column: x => x.GymBranchID,
-                        principalTable: "gymbranches",
+                        principalTable: "gymbranch",
                         principalColumn: "GymBranchID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_gymadminactions_users_UserID",
+                        name: "FK_gymadminaction_user_UserID",
                         column: x => x.UserID,
-                        principalTable: "users",
+                        principalTable: "user",
                         principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "gymsessions",
+                name: "gymsession",
                 columns: table => new
                 {
                     GymSessionID = table.Column<Guid>(type: "uuid", nullable: false),
                     UserID = table.Column<Guid>(type: "uuid", nullable: false),
                     GymBranchID = table.Column<Guid>(type: "uuid", nullable: false),
                     CheckInTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CheckOutTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CheckOutTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     SessionDuration = table.Column<int>(type: "integer", nullable: true),
                     CheckInLat = table.Column<decimal>(type: "numeric(18,6)", precision: 18, scale: 6, nullable: false),
                     CheckInLong = table.Column<decimal>(type: "numeric(18,6)", precision: 18, scale: 6, nullable: false),
@@ -265,45 +235,86 @@ namespace GYMIND.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_gymsessions", x => x.GymSessionID);
+                    table.PrimaryKey("PK_gymsession", x => x.GymSessionID);
                     table.ForeignKey(
-                        name: "FK_gymsessions_gymbranches_GymBranchID",
+                        name: "FK_gymsession_gymbranch_GymBranchID",
                         column: x => x.GymBranchID,
-                        principalTable: "gymbranches",
+                        principalTable: "gymbranch",
                         principalColumn: "GymBranchID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_gymsessions_users_UserID",
+                        name: "FK_gymsession_user_UserID",
                         column: x => x.UserID,
-                        principalTable: "users",
+                        principalTable: "user",
                         principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "notifications",
+                name: "membership",
                 columns: table => new
                 {
-                    notificationid = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserID = table.Column<Guid>(type: "uuid", nullable: true),
-                    GymBranchID = table.Column<Guid>(type: "uuid", nullable: true),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
+                    membershipid = table.Column<Guid>(type: "uuid", nullable: false),
+                    userid = table.Column<Guid>(type: "uuid", nullable: false),
+                    gymid = table.Column<Guid>(type: "uuid", nullable: false),
+                    gymbranchid = table.Column<Guid>(type: "uuid", nullable: true),
+                    ismember = table.Column<bool>(type: "boolean", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    joinedat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    removedat = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notifications", x => x.notificationid);
+                    table.PrimaryKey("PK_membership", x => x.membershipid);
                     table.ForeignKey(
-                        name: "FK_notifications_gymbranches_GymBranchID",
-                        column: x => x.GymBranchID,
-                        principalTable: "gymbranches",
+                        name: "FK_membership_gym_gymid",
+                        column: x => x.gymid,
+                        principalTable: "gym",
+                        principalColumn: "gymid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_membership_gymbranch_gymbranchid",
+                        column: x => x.gymbranchid,
+                        principalTable: "gymbranch",
                         principalColumn: "GymBranchID");
                     table.ForeignKey(
-                        name: "FK_notifications_users_UserID",
-                        column: x => x.UserID,
-                        principalTable: "users",
+                        name: "FK_membership_user_userid",
+                        column: x => x.userid,
+                        principalTable: "user",
+                        principalColumn: "userid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "notification",
+                columns: table => new
+                {
+                    notificationid = table.Column<Guid>(type: "uuid", nullable: false),
+                    userid = table.Column<Guid>(type: "uuid", nullable: true),
+                    gymid = table.Column<Guid>(type: "uuid", nullable: true),
+                    gymbranchid = table.Column<Guid>(type: "uuid", nullable: true),
+                    title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    message = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    sentat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_notification", x => x.notificationid);
+                    table.ForeignKey(
+                        name: "FK_notification_gym_gymid",
+                        column: x => x.gymid,
+                        principalTable: "gym",
+                        principalColumn: "gymid");
+                    table.ForeignKey(
+                        name: "FK_notification_gymbranch_gymbranchid",
+                        column: x => x.gymbranchid,
+                        principalTable: "gymbranch",
+                        principalColumn: "GymBranchID");
+                    table.ForeignKey(
+                        name: "FK_notification_user_userid",
+                        column: x => x.userid,
+                        principalTable: "user",
                         principalColumn: "userid");
                 });
 
@@ -322,9 +333,9 @@ namespace GYMIND.API.Migrations
                 {
                     table.PrimaryKey("PK_traffictrack", x => x.TrafficTrackID);
                     table.ForeignKey(
-                        name: "FK_traffictrack_gymbranches_GymBranchID",
+                        name: "FK_traffictrack_gymbranch_GymBranchID",
                         column: x => x.GymBranchID,
-                        principalTable: "gymbranches",
+                        principalTable: "gymbranch",
                         principalColumn: "GymBranchID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -333,9 +344,8 @@ namespace GYMIND.API.Migrations
                 name: "usernotification",
                 columns: table => new
                 {
-                    usernotificationid = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
+                    usernotificationid = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserID = table.Column<Guid>(type: "uuid", nullable: false),
                     notificationid = table.Column<Guid>(type: "uuid", nullable: false),
                     readstatus = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     readat = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
@@ -344,73 +354,83 @@ namespace GYMIND.API.Migrations
                 {
                     table.PrimaryKey("PK_usernotification", x => x.usernotificationid);
                     table.ForeignKey(
-                        name: "FK_usernotification_notifications_notificationid",
+                        name: "FK_usernotification_notification_notificationid",
                         column: x => x.notificationid,
-                        principalTable: "notifications",
+                        principalTable: "notification",
                         principalColumn: "notificationid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_usernotification_users_userid",
-                        column: x => x.userid,
-                        principalTable: "users",
+                        name: "FK_usernotification_user_UserID",
+                        column: x => x.UserID,
+                        principalTable: "user",
                         principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_announcements_GymBranchID",
-                table: "announcements",
+                name: "IX_announcement_GymBranchID",
+                table: "announcement",
                 column: "GymBranchID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymadminactions_GymBranchID",
-                table: "gymadminactions",
+                name: "IX_gymadminaction_GymBranchID",
+                table: "gymadminaction",
                 column: "GymBranchID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymadminactions_UserID",
-                table: "gymadminactions",
+                name: "IX_gymadminaction_UserID",
+                table: "gymadminaction",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymbranches_GymID",
-                table: "gymbranches",
-                column: "GymID");
+                name: "IX_gymbranch_gymid",
+                table: "gymbranch",
+                column: "gymid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymbranches_LocationID",
-                table: "gymbranches",
-                column: "LocationID");
+                name: "IX_gymbranch_locationid",
+                table: "gymbranch",
+                column: "locationid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymsessions_GymBranchID",
-                table: "gymsessions",
+                name: "IX_gymsession_GymBranchID",
+                table: "gymsession",
                 column: "GymBranchID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_gymsessions_UserID",
-                table: "gymsessions",
+                name: "IX_gymsession_UserID",
+                table: "gymsession",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_memberships_GymID",
-                table: "memberships",
-                column: "GymID");
+                name: "IX_membership_gymbranchid",
+                table: "membership",
+                column: "gymbranchid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_memberships_UserID",
-                table: "memberships",
-                column: "UserID");
+                name: "IX_membership_gymid",
+                table: "membership",
+                column: "gymid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notifications_GymBranchID",
-                table: "notifications",
-                column: "GymBranchID");
+                name: "IX_membership_userid",
+                table: "membership",
+                column: "userid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notifications_UserID",
-                table: "notifications",
-                column: "UserID");
+                name: "IX_notification_gymbranchid",
+                table: "notification",
+                column: "gymbranchid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_notification_gymid",
+                table: "notification",
+                column: "gymid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_notification_userid",
+                table: "notification",
+                column: "userid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_systemadminactions_UserID",
@@ -428,9 +448,9 @@ namespace GYMIND.API.Migrations
                 column: "notificationid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_usernotification_userid_notificationid",
+                name: "IX_usernotification_UserID_notificationid",
                 table: "usernotification",
-                columns: new[] { "userid", "notificationid" },
+                columns: new[] { "UserID", "notificationid" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -449,16 +469,16 @@ namespace GYMIND.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "announcements");
+                name: "announcement");
 
             migrationBuilder.DropTable(
-                name: "gymadminactions");
+                name: "gymadminaction");
 
             migrationBuilder.DropTable(
-                name: "gymsessions");
+                name: "gymsession");
 
             migrationBuilder.DropTable(
-                name: "memberships");
+                name: "membership");
 
             migrationBuilder.DropTable(
                 name: "systemadminactions");
@@ -473,19 +493,19 @@ namespace GYMIND.API.Migrations
                 name: "userrole");
 
             migrationBuilder.DropTable(
-                name: "notifications");
+                name: "notification");
 
             migrationBuilder.DropTable(
-                name: "roles");
+                name: "role");
 
             migrationBuilder.DropTable(
-                name: "gymbranches");
+                name: "gymbranch");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "user");
 
             migrationBuilder.DropTable(
-                name: "gyms");
+                name: "gym");
 
             migrationBuilder.DropTable(
                 name: "locations");

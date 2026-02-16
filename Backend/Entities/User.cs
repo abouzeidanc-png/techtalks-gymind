@@ -34,7 +34,7 @@ public class User
 
     // Navigation properties
     public ICollection<UserRole> UserRole { get; set; } = new List<UserRole>();
-    public ICollection<UserNotification> UserNotifications { get; set; } = new List<UserNotification>();
+    public ICollection<UserNotification> UserNotifications { get; set; } 
 }
 
 
