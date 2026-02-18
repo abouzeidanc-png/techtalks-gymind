@@ -5,17 +5,32 @@ import type { RootStackParamList } from "./types";
 
 import Splash from "../screen/Intro/Splash";
 import IntroScreen from "../screen/Intro/IntroScreen";
+import Login from "../screen/Login";
+import Home from "../screen/Home";
 import Login from "../screen/Auth/Login";
 import Register from "../screen/Auth/Register";
 import LocationPicker from "../screen/Auth/LocationPicker";
 import ForgotPassword from "../screen/Auth/ForgotPassword";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const isAuthenticated  = false; // Placeholder for auth state, replace with real logic
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Splash" component={Splash} /> 
+            <Stack.Screen name="Intro" component={IntroScreen} />
+            
+            <Stack.Screen name="Home" component={ Home } />
+          </>
+        )}
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Intro" component={IntroScreen} />
         <Stack.Screen name="Login" component={Login} />

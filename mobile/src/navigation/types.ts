@@ -15,4 +15,5 @@ export type RootStackParamList = {
     | undefined;
 
   LocationPicker: undefined;
+  Home: undefined;
 };
