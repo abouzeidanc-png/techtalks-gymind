@@ -15,7 +15,7 @@ namespace GYMIND.API.Services
             _context = context;
         }
 
-        // 1️⃣ Issue a New Membership
+        // Issue a New Membership
         public async Task<MembershipSummaryDto> IssueMembershipAsync(Guid userId, CreateMembershipDto dto)
         {
             var membership = new Membership
@@ -44,7 +44,7 @@ namespace GYMIND.API.Services
             };
         }
 
-        // 2️⃣ Update Membership (Admin)
+        // Update Membership (Admin)
         public async Task<MembershipSummaryDto?> UpdateMembershipAsync(Guid membershipId, MembershipUpdateDto dto)
         {
             var membership = await _context.Memberships
@@ -72,7 +72,7 @@ namespace GYMIND.API.Services
             };
         }
 
-        // 3️⃣ Cancel Membership (Logical Delete)
+        // Cancel Membership (Logical Delete)
         public async Task<bool> CancelMembershipAsync(Guid membershipId)
         {
             var membership = await _context.Memberships.FindAsync(membershipId);
