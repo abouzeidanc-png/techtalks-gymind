@@ -7,7 +7,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.GymSession> entity)
         {
-            entity.ToTable("gymsessions");
+            entity.ToTable("gymsession");
             entity.HasKey(gs => gs.GymSessionID);
 
             // High precision for coordinates

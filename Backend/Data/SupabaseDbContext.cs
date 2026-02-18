@@ -17,7 +17,7 @@ namespace GYMIND.API.Data
         public DbSet<UserNotification> UserNotifications { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<Announcement> Announcements { get; set; } = null!;
-        public DbSet<Gym> Gyms { get; set; } = null!;
+        public DbSet<Gym> Gym { get; set; } = null!;
         public DbSet<GymBranch> GymBranches { get; set; } = null!;
         public DbSet<Membership> Memberships { get; set; } = null!;
         public DbSet<Location> Locations { get; set; } = null!;

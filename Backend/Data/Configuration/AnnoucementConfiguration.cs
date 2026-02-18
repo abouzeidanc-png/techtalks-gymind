@@ -8,6 +8,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Announcement> entity)
         {
+            entity.ToTable("announcement");
             entity.ToTable("announcements"); // تأكد من اسم الجدول الفعلي
 
             entity.HasKey(a => a.AnnouncementID);

@@ -1,4 +1,3 @@
-
 using GYMIND.API.DTOs;
 using GYMIND.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,68 +6,86 @@ namespace GYMIND.API.Controllers
 {
     [ApiController]
     [Route("api/gyms")]
-    public class GymController : ControllerBase
+    public class GymsController : ControllerBase
     {
         private readonly IGymService _gymService;
 
-        public GymController(IGymService gymService)
+        public GymsController(IGymService gymService)
         {
             _gymService = gymService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllGyms()
+        public async Task<IActionResult> GetAll()
         {
             var gyms = await _gymService.GetAllGymsAsync();
             return Ok(gyms);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetGym(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var gym = await _gymService.GetGymByIdAsync(id);
-            if (gym == null)
-                return NotFound();
-
-            return Ok(gym);
+            return gym is null ? NotFound() : Ok(gym);
         }
 
-        [HttpGet("name")]
-        public async Task<IActionResult> GetGymByName(string name)
+        [HttpGet("by-name/{name}")]
+        public async Task<IActionResult> GetByName(string name)
         {
             var gym = await _gymService.GetGymByNameAsync(name);
-            if (gym == null)
-                return NotFound();
-
-            return Ok(gym);
+            return gym is null ? NotFound() : Ok(gym);
         }
 
-        [HttpGet("address")]
-        public async Task<IActionResult> GetGymByAddress(string address)
+        [HttpGet("by-address/{address}")]
+        public async Task<IActionResult> GetByAddress(string address)
         {
             var gyms = await _gymService.GetGymsByAddressAsync(address);
-            if (!gyms.Any())
-                return NotFound();
-
-            return Ok(gyms);
+            return !gyms.Any() ? NotFound() : Ok(gyms);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGym ([FromBody] GymDto dto)
+        public async Task<IActionResult> Create([FromBody] GymDto dto)
         {
-            var createdGym = await _gymService.CreateGymAsync(dto);
-            return CreatedAtAction(nameof(GetGym), new { id = createdGym.GymId }, createdGym);
+            var created = await _gymService.CreateGymAsync(dto);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = created.GymID },
+                created
+            );
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateGym(Guid id, [FromBody] GymDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] GymDto dto)
         {
-            var success = await _gymService.UpdateGymAsync(id, dto);
-            if (!success)
-                return NotFound();
-
-            return NoContent();
+            var updated = await _gymService.UpdateGymAsync(id, dto);
+            return updated ? NoContent() : NotFound();
         }
 
+        [HttpPost("{gymId:guid}/branches")]
+        public async Task<IActionResult> CreateBranch(Guid gymId, [FromBody] GymBranchDto dto)
+        {
+            var branch = await _gymService.CreateBranchAsync(gymId, dto);
+
+            return CreatedAtAction(
+                nameof(GetBranch),
+                new { branchId = branch.GymBranchID },
+                branch
+            );
+        }
+
+        [HttpGet("branches/{branchId:guid}")]
+        public async Task<IActionResult> GetBranch(Guid branchId)
+        {
+            var branch = await _gymService.GetBranchByIdAsync(branchId);
+            return branch is null ? NotFound() : Ok(branch);
+        }
+
+        [HttpPut("branches/{branchId:guid}")]
+        public async Task<IActionResult> UpdateBranch(Guid branchId, [FromBody] GymBranchDto dto)
+        {
+            var updated = await _gymService.UpdateBranchAsync(branchId, dto);
+            return updated ? NoContent() : NotFound();
+        }
     }
 }

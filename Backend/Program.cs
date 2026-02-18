@@ -70,11 +70,12 @@ builder.Services.AddScoped(_ => new Supabase.Client(supabaseUrl, supabaseKey));
 //Register Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IGymService, GymService>();
+builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IGymSessionService, GymSessionService>();
 builder.Services.AddHttpContextAccessor(); //Because inside NotificationService we use:  _httpContextAccessor.HttpContext.User
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
-
 
 
 // Swagger/OpenAPI configuration

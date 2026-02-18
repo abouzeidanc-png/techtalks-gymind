@@ -9,7 +9,7 @@ namespace GYMIND.API.Data.Configuration
         public void Configure(EntityTypeBuilder<Role> entity)
         {
             // Map to the table
-            entity.ToTable("roles"); 
+            entity.ToTable("role"); 
 
             // Primary key
             entity.HasKey(r => r.RoleID);
