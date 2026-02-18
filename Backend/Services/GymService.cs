@@ -1,208 +1,160 @@
 using GYMIND.API.Data;
-using GYMIND.API.Interfaces;
-using Microsoft.EntityFrameworkCore;
-// using AutoMapper;
 using GYMIND.API.DTOs;
 using GYMIND.API.Entities;
+using GYMIND.API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GYMIND.API.Service
 {
     public class GymService : IGymService
     {
         private readonly SupabaseDbContext _context;
-        // private readonly IMapper _mapper;
-        // private readonly Supabase.Client _supabase;
 
         public GymService(SupabaseDbContext context)
         {
             _context = context;
-            // _mapper = mapper;
-            // _supabase = supabase;
         }
-        
+
+        private static GymDto MapGymToDto(Gym gym)
+        {
+            return new GymDto
+            {
+                GymID = gym.GymID,
+                Name = gym.Name,
+                Description = gym.Description,
+                IsApproved = gym.IsApproved,
+                CreatedAt = gym.CreatedAt
+            };
+        }
+
         public async Task<IEnumerable<GymDto>> GetAllGymsAsync()
         {
-            return await _context.Gym
-                .Select(g => new GymDto
-                {
-                    GymId = g.GymId,
-                    Name = g.Name,
-                    Description = _context.GymBranches
-                        .Where(gb => gb.GymID == g.GymId)
-                        .Select(gb => gb.ServiceDescription)
-                        .FirstOrDefault()!, // Get description from the first branch
-                    IsApproved = g.IsApproved,
-                    CreatedAt = g.CreatedAt
-                })
+            var gyms = await _context.Gym
+                .AsNoTracking()
+                .Include(g => g.GymBranches)
                 .ToListAsync();
+
+            return gyms.Select(MapGymToDto);
         }
 
         public async Task<GymDto?> GetGymByIdAsync(Guid id)
         {
-            var gym = await _context.Gym.FindAsync(id);
-            if (gym == null || !gym.IsApproved)
-                return null;
+            var gym = await _context.Gym
+                .Include(g => g.GymBranches)
+                .FirstOrDefaultAsync(g => g.GymID == id && g.IsApproved);
 
-            return new GymDto
-            {
-                GymId = gym.GymId,
-                Name = gym.Name,
-                Description = _context.GymBranches.Where(gb => gb.GymID == gym.GymId).Select(gb => gb.ServiceDescription).FirstOrDefault()!,
-                IsApproved = gym.IsApproved,
-                CreatedAt = gym.CreatedAt
-            };
+            return gym is null ? null : MapGymToDto(gym);
         }
 
         public async Task<GymDto?> GetGymByNameAsync(string name)
         {
             var gym = await _context.Gym
-                .Where(g => g.Name == name)
-                .FirstOrDefaultAsync();
+                .Include(g => g.GymBranches)
+                .FirstOrDefaultAsync(g => g.Name == name);
 
-            if(gym == null) return null;
-
-            return new GymDto
-            {
-                GymId = gym.GymId,
-                Name = gym.Name,
-                Description = _context.GymBranches.Where(gb => gb.GymID == gym.GymId).Select(gb => gb.ServiceDescription).FirstOrDefault()!,
-                IsApproved = gym.IsApproved,
-                CreatedAt = gym.CreatedAt
-            };
+            return gym is null ? null : MapGymToDto(gym);
         }
 
-        public async Task<IEnumerable<GymDto?>> GetGymsByAddressAsync(string address)
+        /// <summary>
+        /// Fixed: query gyms by address safely without projection Include issues
+        /// </summary>
+        public async Task<IEnumerable<GymDto>> GetGymsByAddressAsync(string address)
         {
-            var gyms = await _context.GymBranches  
-                .Where(gb => gb.Location.City.Contains(address) && gb.Gym.IsApproved)
-                .Select(gb => new GymDto
-                {
-                    GymId = gb.GymID,
-                    Name = gb.Gym.Name,
-                    Description = gb.ServiceDescription ?? string.Empty,
-                    IsApproved = gb.Gym.IsApproved,
-                    CreatedAt = gb.Gym.CreatedAt
-                })
+            var gyms = await _context.Gym
+                .Include(g => g.GymBranches)
+                    .ThenInclude(gb => gb.Location) // include location for City
+                .Where(g => g.GymBranches.Any(gb => gb.Location.City.Contains(address)) && g.IsApproved)
                 .ToListAsync();
 
-            return gyms;
-        }
-
-        public async Task<IEnumerable<GymDto>> GetGymsByApprovalStatusAsync(bool isApproved)
-        {
-            return await _context.Gym
-                .Where(g => g.IsApproved == isApproved)
-                .Select(g => new GymDto
-                {
-                    GymId = g.GymId,
-                    Name = g.Name,
-                    Description = _context.GymBranches
-                        .Where(gb => gb.GymID == g.GymId)
-                        .Select(gb => gb.ServiceDescription)
-                        .FirstOrDefault()!,
-                    IsApproved = g.IsApproved,
-                    CreatedAt = g.CreatedAt
-                })
-                .ToListAsync();
+            return gyms.Select(MapGymToDto);
         }
 
         public async Task<GymDto> CreateGymAsync(GymDto dto)
         {
             var gym = new Gym
             {
-                GymId = Guid.NewGuid(),
+                GymID = Guid.NewGuid(),
                 Name = dto.Name,
-                IsApproved = dto.IsApproved,
-                CreatedAt = DateTime.UtcNow,
+                Description = dto.Description,
+                IsApproved = false,
+                CreatedAt = DateTime.UtcNow
             };
 
             await _context.Gym.AddAsync(gym);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message ?? ex.Message); // returning message to be chaanged later for better error handling and security
-                throw;
-            }
-
-            return new GymDto
-            {
-                GymId = gym.GymId,
-                Name = gym.Name,
-                IsApproved = gym.IsApproved,
-                CreatedAt = gym.CreatedAt,
-            };
+            return MapGymToDto(gym);
         }
 
         public async Task<bool> UpdateGymAsync(Guid id, GymDto dto)
         {
             var gym = await _context.Gym.FindAsync(id);
+            if (gym is null) return false;
 
-            if (gym == null) return false;
-
-            if (!string.IsNullOrWhiteSpace(dto.Name)) 
-                gym.Name = dto.Name;
+            gym.Name = dto.Name ?? gym.Name;
+            gym.Description = dto.Description ?? gym.Description;
+            gym.IsApproved = dto.IsApproved;
 
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> ApproveGymAsync(Guid id)
-        {
-            return true;
-        }
-
         public async Task<GymBranchDto> CreateBranchAsync(Guid gymId, GymBranchDto dto)
         {
-            var gymExists = await _context.Gym.AnyAsync(g => g.GymId == gymId);
-
+            var gymExists = await _context.Gym.AnyAsync(g => g.GymID == gymId);
             if (!gymExists)
-                throw new Exception("Gym Not Found");
-            
+                throw new Exception("Gym not found.");
+
             var branch = new GymBranch
             {
                 GymBranchID = Guid.NewGuid(),
                 GymID = gymId,
                 LocationID = dto.LocationID,
                 Name = dto.Name,
-                OperatingHours = dto.OperatingHours,
+                OpeningHours = dto.OperatingHours,
                 ServiceDescription = dto.ServiceDescription,
                 CoverImageUrl = dto.CoverImageUrl,
                 IsActive = true
             };
 
             await _context.GymBranches.AddAsync(branch);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message ?? ex.Message);
-                throw;
-            }
+            await _context.SaveChangesAsync();
 
             dto.GymBranchID = branch.GymBranchID;
-
             return dto;
+        }
+
+        public async Task<GymBranchDto?> GetBranchByIdAsync(Guid branchId)
+        {
+            var branch = await _context.GymBranches
+                .Include(b => b.Gym) // optional: include gym if you need its data
+                // .Include(b => b.Location) // optional: include location
+                .FirstOrDefaultAsync(b => b.GymBranchID == branchId);
+
+            if (branch is null) return null;
+
+            return new GymBranchDto
+            {
+                GymBranchID = branch.GymBranchID,
+                GymID = branch.GymID,
+                LocationID = branch.LocationID,
+                Name = branch.Name,
+                OperatingHours = branch.OpeningHours,
+                ServiceDescription = branch.ServiceDescription,
+                CoverImageUrl = branch.CoverImageUrl
+            };
         }
 
         public async Task<bool> UpdateBranchAsync(Guid branchId, GymBranchDto dto)
         {
             var branch = await _context.GymBranches.FindAsync(branchId);
+            if (branch is null) return false;
 
-            if (branch == null)
-                return false;
-            
-            branch.Name = dto.Name;
-            branch.OperatingHours = dto.OperatingHours;
-            branch.ServiceDescription = dto.ServiceDescription;
-            branch.CoverImageUrl = dto.CoverImageUrl;
-            
+            branch.Name = dto.Name ?? branch.Name;
+            branch.OpeningHours = dto.OperatingHours ?? branch.OpeningHours;
+            branch.ServiceDescription = dto.ServiceDescription ?? branch.ServiceDescription;
+            branch.CoverImageUrl = dto.CoverImageUrl ?? branch.CoverImageUrl;
+
             await _context.SaveChangesAsync();
             return true;
         }

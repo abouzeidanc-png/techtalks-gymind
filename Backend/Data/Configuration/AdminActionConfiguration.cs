@@ -7,7 +7,7 @@ namespace GYMIND.API.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Entities.GymAdminAction> entity)
         {
-            entity.ToTable("gymadminactions");
+            entity.ToTable("gymadminaction");
             entity.HasKey(gaa => gaa.GymAdminActionID);
             entity.Property(gaa => gaa.GymAdminActionID).HasColumnName("gymadminactionid");
 

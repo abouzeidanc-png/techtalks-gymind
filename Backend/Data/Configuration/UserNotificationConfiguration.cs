@@ -11,8 +11,8 @@ namespace GYMIND.API.Data.Configuration
             entity.HasKey(un => un.UserNotificationID);
 
             entity.Property(un => un.UserNotificationID).HasColumnName("usernotificationid");
-            entity.Property(un => un.UserID).HasColumnName("userid");
-            entity.Property(un => un.NotificationID).HasColumnName("notificationid");
+            
+entity.Property(un => un.NotificationID).HasColumnName("notificationid");
             entity.Property(un => un.ReadStatus).HasColumnName("readstatus").HasDefaultValue(false);
             entity.Property(un => un.ReadAt).HasColumnName("readat");
 
@@ -20,11 +20,13 @@ namespace GYMIND.API.Data.Configuration
             entity.HasIndex(un => new { un.UserID, un.NotificationID }).IsUnique();
 
             entity.HasOne(un => un.User)
-                .WithMany() 
-                .HasForeignKey(un => un.UserID);
+                .WithMany(u => u.UserNotifications) 
+                .HasForeignKey(un => un.UserID)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(un => un.Notification)
-                .WithMany()
+                .WithMany(n => n.UserNotifications)
                 .HasForeignKey(un => un.NotificationID);
         }
     }

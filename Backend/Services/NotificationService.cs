@@ -22,23 +22,23 @@ namespace GYMIND.API.Services
 
         private Guid GetCurrentUserId()
         {
-            var userId = _httpContextAccessor.HttpContext?
+            var userID = _httpContextAccessor.HttpContext?
                 .User?
                 .FindFirst(ClaimTypes.NameIdentifier)?
                 .Value;
 
-            return Guid.Parse(userId!);
+            return Guid.Parse(userID!);
         }
 
         // =========================================
-        // 1️⃣ Create Notification For Gym
+        // 1️⃣ Create Notification For Gym 
         // =========================================
         public async Task CreateForGymAsync(Guid gymId, CreateNotificationDto dto)
         {
             var notification = new Notification
             {
                 NotificationID = Guid.NewGuid(),
-                GymId = gymId,
+                GymID = gymId,
                 Title = dto.Title,
                 Message = dto.Message,
                 SentAt = DateTime.UtcNow
@@ -48,14 +48,16 @@ namespace GYMIND.API.Services
 
             // Get all active members of this gym
             var users = await _context.Memberships
-                .Where(m => m.GymID == gymId && m.IsMember && m.RemovedAt == null)
-                .Select(m => m.UserID)
-                .Distinct()
+                .Where(m => m.GymID == gymId && m.IsMember 
+                                             && m.RemovedAt == null
+                                             && (m.ExpiryDate == null || m.ExpiryDate > DateTime.UtcNow))
+                .Select(m => new {m.UserID, m.MembershipID})
                 .ToListAsync();
 
-            var userNotifications = users.Select(userId => new UserNotification
+            var userNotifications = users.Select(member => new UserNotification
             {
-                UserID = userId,
+                UserNotificationID = Guid.NewGuid(),
+                UserID = member.UserID,
                 NotificationID = notification.NotificationID,
                 ReadStatus = false
             }).ToList();
@@ -79,7 +81,7 @@ namespace GYMIND.API.Services
             var notification = new Notification
             {
                 NotificationID = Guid.NewGuid(),
-                GymId = branch.GymID,
+                GymID = branch.GymID,
                 GymBranchID = branchId,
                 Title = dto.Title,
                 Message = dto.Message,
@@ -95,9 +97,9 @@ namespace GYMIND.API.Services
                 .Distinct()
                 .ToListAsync();
 
-            var userNotifications = users.Select(userId => new UserNotification
+            var userNotifications = users.Select(userID => new UserNotification
             {
-                UserID = userId,
+                UserID = userID,
                 NotificationID = notification.NotificationID,
                 ReadStatus = false
             }).ToList();
@@ -112,10 +114,10 @@ namespace GYMIND.API.Services
         // =========================================
         public async Task<List<NotificationDto>> GetMyNotificationsAsync()
         {
-            var userId = GetCurrentUserId();
+            var userID = GetCurrentUserId();
 
             var notifications = await _context.UserNotifications
-                .Where(un => un.UserID == userId)
+                .Where(un => un.UserID == userID)
                 .Join(_context.Notifications,
                     un => un.NotificationID,
                     n => n.NotificationID,
@@ -125,7 +127,7 @@ namespace GYMIND.API.Services
                         Title = n.Title,
                         Message = n.Message,
                         SentAt = n.SentAt,
-                        GymId = n.GymId,
+                        GymId = n.GymID,
                         GymBranchID = n.GymBranchID,
                         IsRead = un.ReadStatus,
                         ReadAt = un.ReadAt
@@ -141,11 +143,11 @@ namespace GYMIND.API.Services
         // =========================================
         public async Task MarkAsReadAsync(Guid notificationId)
         {
-            var userId = GetCurrentUserId();
+            var userID = GetCurrentUserId();
 
             var userNotification = await _context.UserNotifications
                 .FirstOrDefaultAsync(un =>
-                    un.UserID == userId &&
+                    un.UserID == userID &&
                     un.NotificationID == notificationId);
 
             if (userNotification == null)
