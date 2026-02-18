@@ -6,7 +6,7 @@
         public Guid UserID { get; set; }
         public Guid GymID { get; set; }
         public Guid? GymBranchID { get; set; }
-
+        // public bool IsActive { get; set; }
         public bool IsMember { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public DateTime JoinedAt { get; set; }
