@@ -14,6 +14,9 @@ namespace GYMIND.API.Data.Configuration
             entity.Property(m => m.MembershipID).HasColumnName("membershipid");
             entity.Property(m => m.UserID).HasColumnName("userid");
             entity.Property(m => m.GymID).HasColumnName("gymid");
+            entity.Property(m => m.IsMember).HasColumnName("ismember");
+            entity.Property(m => m.JoinedAt).HasColumnName("joinedat");
+            entity.Property(m => m.RemovedAt).HasColumnName("removedat");
 
 
             entity.HasOne(m => m.User)
