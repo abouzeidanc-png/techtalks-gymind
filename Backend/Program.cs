@@ -73,6 +73,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IGymSessionService, GymSessionService>();
 builder.Services.AddHttpContextAccessor(); //Because inside NotificationService we use:  _httpContextAccessor.HttpContext.User
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 
 
 

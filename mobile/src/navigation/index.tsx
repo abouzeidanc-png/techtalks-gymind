@@ -3,9 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "./types";
 
-import Splash from "../Pages/Splash";
-import IntroScreen from "../Pages/Intro/IntroScreen";
-import Login from "../Pages/Login";
+import Splash from "../screen/Splash";
+import IntroScreen from "../screen/Intro/IntroScreen";
+import Login from "../screen/Login";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
