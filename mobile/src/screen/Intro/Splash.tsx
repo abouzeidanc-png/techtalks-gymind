@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ImageBackground } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../navigation/types";
+import type { RootStackParamList } from "../../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Splash">;
 
@@ -16,7 +16,7 @@ export default function Splash({ navigation }: Props) {
 
   return (
     <ImageBackground
-      source={require("../../assets/splash-icon.png")}
+      source={require("../../../assets/splash-icon.png")}
       style={styles.container}
       resizeMode="cover"
     >
