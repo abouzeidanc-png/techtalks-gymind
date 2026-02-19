@@ -16,5 +16,5 @@ export type RootStackParamList = {
 
   LocationPicker: undefined;
   Home: undefined;
-  GymPage: undefined;
+  GymPage: { gymId: string };
 };
