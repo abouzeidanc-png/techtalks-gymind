@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../navigation/types";
+import type { RootStackParamList } from "../../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -22,7 +22,7 @@ export default function Login({ navigation }: Props) {
     <SafeAreaView style={styles.container}>
       {/* Logo */}
       <Image
-        source={require("../../assets/icon.png")}
+        source={require("../../../assets/icon.png")} 
         style={styles.logo}
         resizeMode="contain"
       />
@@ -74,19 +74,26 @@ export default function Login({ navigation }: Props) {
       </View>
 
       {/* Forgot password */}
-      <Pressable>
+      <Pressable onPress={() => navigation.navigate("ForgotPassword")}>
         <Text style={styles.forgot}>Forgot Password</Text>
       </Pressable>
+
 
       {/* Continue button */}
       <Pressable style={styles.button}>
         <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
 
-      {/* Create account */}
-      <Text style={styles.footer}>
-        New here ? <Text style={styles.create}>Create an account</Text>
-      </Text>
+<Text style={styles.footer}>
+  New here ?{" "}
+  <Text
+    style={styles.create}
+    onPress={() => navigation.navigate("Register")}
+  >
+    Create an account
+  </Text>
+</Text>
+
     </SafeAreaView>
   );
 }
@@ -106,15 +113,15 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 90,
-    height: 90,
-    marginTop: 30,
+    width: 150,
+    height: 150,
+    marginTop: 45,
     alignSelf: "center",
-    marginBottom: 18,
+    marginBottom: 28,
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: "800",
     color: COLORS.dark,
     textAlign: "center",
@@ -135,16 +142,17 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
     backgroundColor: "#EDEDED",
     borderRadius: 14,
     paddingHorizontal: 14,
-    marginBottom: 16,
-    width: "100%",
-    height: 48, // ✅ smaller height
-
+    marginBottom: 25,
+    width: "90%",
+    height: 50,
     borderWidth: 2,
     borderColor: "transparent",
-
+    alignSelf: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.07,
@@ -171,8 +179,8 @@ const styles = StyleSheet.create({
     flex: 1,
     color: COLORS.dark,
     fontSize: 15,
-    paddingVertical: 0, // ✅ fixes vertical centering
-    textAlign: "left", // ✅ text starts from left
+    paddingVertical: 0, 
+    textAlign: "left", 
   },
 
   forgot: {
@@ -185,14 +193,13 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: COLORS.orange,
-    width: "100%",
+    width: "90%",
     height: 52,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 26,
-
-    shadowColor: COLORS.orange,
+    alignSelf: "center",    shadowColor: COLORS.orange,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
