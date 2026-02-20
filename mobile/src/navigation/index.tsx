@@ -17,28 +17,29 @@ const isAuthenticated  = false;
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
-          <>
-            
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen  name="LocationPicker"  component={LocationPicker}/>
-            <Stack.Screen name="ForgotPassword" component={ForgotPassword} /> 
-            <Stack.Screen name="GymPage" component={GymPage} />
-          </>
-        ) : (
-          <>
-              <Stack.Screen name="Splash" component={Splash} />
-              <Stack.Screen name="Intro" component={IntroScreen} />
-              <Stack.Screen name="Home" component={ Home } />
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="Register" component={Register} />
+  {/* Change initialRouteName to "GymPage" to skip everything else */}
+  <Stack.Navigator 
+    initialRouteName="GymPage" 
+    screenOptions={{ headerShown: false }}
+  >
+    {/* 1. Global Screens (Accessible regardless of Auth) */}
+    <Stack.Screen name="GymPage" component={GymPage} />
 
-          </>
-        )}
-
-
-      </Stack.Navigator>
-    </NavigationContainer>
+    {isAuthenticated ? (
+      <>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="LocationPicker" component={LocationPicker} />
+      </>
+    ) : (
+      <>
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Intro" component={IntroScreen} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      </>
+    )}
+  </Stack.Navigator>
+</NavigationContainer>
   );
 }

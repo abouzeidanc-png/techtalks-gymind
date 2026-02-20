@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { spacing } from '../theme/spacing'; //
-import { colors } from '../theme/colors'; //
-import { typography } from '../theme/typography'; //
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { spacing } from '../theme/spacing';
+import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-// 1. Navigation Types
+// Standard boilerplate for navigation types
 type RootStackParamList = {
   GymPage: { gymId: string };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GymPage'>;
 
-// 2. Data Interface matching your GymsController/GymDto
+// This should match the DTO 
 interface Gym {
   gymID: string;
   name: string;
@@ -21,13 +21,18 @@ interface Gym {
 }
 
 const GymPage = ({ route }: Props) => {
-  const { gymId } = route.params; // Get the ID from navigation
+  /* If we're deep-linking or bypassing login, route.params might be empty.
+     We use this hardcoded GUID as a safety net so the page doesn't just sit there.
+  */
+  const gymId = route?.params?.gymId || "88d6270c-56ae-4384-ba06-4532cee0c691";
+  
   const [gym, setGym] = useState<Gym | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 3. Localhost Connection
-  // Use 10.0.2.2 for Android Emulator, or your local IP for physical devices
-  const API_URL = "https://192.168.0.108:7179/api/gyms"; 
+  /* NOTE: We're using HTTP (not HTTPS) because local dev certificates 
+     usually play havoc with Android/iOS network security policies. 
+  */
+  const API_URL = "https://192.168.0.108:7179/api/gyms/{id}"; 
 
   useEffect(() => {
     fetchGymDetails();
@@ -35,28 +40,39 @@ const GymPage = ({ route }: Props) => {
 
   const fetchGymDetails = async () => {
     try {
-      // Connects to [HttpGet("{id:guid}")] 
+      setLoading(true);
+      
+      // Standard fetch call. If you hit "Network Request Failed", 
+      // check your Windows Firewall and launchSettings.json first.
       const response = await fetch(`${API_URL}/${gymId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
       const data = await response.json();
       setGym(data);
     } catch (error) {
-      console.error("Error fetching gym:", error);
+      console.error("DEBUG -> Gym Fetch Error:", error);
+      Alert.alert("Connection Error", "Couldn't reach the backend. Check your IP and Firewall.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Keep the loader centered so it doesn't look janky
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
+      <View style={[styles.container, styles.centered]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header Image & Logo  */}
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      
+      {/* Visual Header: Uses the overlapping logo style from the design spec */}
       <View style={styles.headerContainer}>
         <Image 
           source={{ uri: 'https://via.placeholder.com/400x200' }} 
@@ -71,9 +87,9 @@ const GymPage = ({ route }: Props) => {
       </View>
 
       <View style={styles.content}>
-        {/* Mapping to  GymDto.Name */}
         <Text style={styles.gymName}>{gym?.name || "Gym Name"}</Text>
         
+        {/* Traffic/Status indicators */}
         <View style={styles.statusRow}>
           <Text style={styles.statusBadge}>
             <Text style={{ color: '#4CAF50' }}>● </Text>Low traffic
@@ -81,19 +97,23 @@ const GymPage = ({ route }: Props) => {
           <Text style={styles.openBadge}>Open</Text>
         </View>
 
-        <TouchableOpacity style={styles.enrollButton}>
+        <TouchableOpacity 
+          style={styles.enrollButton} 
+          activeOpacity={0.8}
+          onPress={() => Alert.alert("Coming Soon", "Enrollment feature is in progress.")}
+        >
           <Text style={styles.enrollText}>Enroll</Text>
         </TouchableOpacity>
 
-        {/* About Section */}
+        {/* Info Card: About */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>About the Gym</Text>
           <Text style={styles.cardBody}>
-            {gym?.description || "Welcome to our premium fitness center."}
+            {gym?.description || "No description provided by the gym."}
           </Text>
         </View>
 
-        {/* Location Section mapping to GymDto.Address */}
+        {/* Info Card: Location */}
         <View style={styles.card}>
           <View style={styles.rowBetween}>
             <Text style={styles.cardTitle}>Location & Branches</Text>
@@ -101,7 +121,7 @@ const GymPage = ({ route }: Props) => {
                <Text style={styles.viewAll}>View all branches {'>'}</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.locationText}>📍 {gym?.address || "123 Fitness St."}</Text>
+          <Text style={styles.locationText}>📍 {gym?.address || "Location not available"}</Text>
         </View>
       </View>
     </ScrollView>
@@ -112,6 +132,10 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     backgroundColor: colors.background // #F5ECE4
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   headerContainer: {
     height: 200,
@@ -124,17 +148,17 @@ const styles = StyleSheet.create({
   logoCircle: {
     position: 'absolute',
     bottom: -35,
-    left: spacing.lg, // 24
+    left: spacing.lg,
     width: 80,
     height: 80,
     borderRadius: 40,
     borderWidth: 3,
     borderColor: colors.primary, // #FC6A0A
-    backgroundColor: colors.white, // #FFFFFF
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
+    elevation: 5, // Android shadow
+    shadowColor: '#000', // iOS shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -145,14 +169,14 @@ const styles = StyleSheet.create({
     borderRadius: 35 
   },
   content: { 
-    padding: spacing.md, // 16
-    marginTop: 40, // Space for the overlapping logo
+    padding: spacing.md, 
+    marginTop: 40, // Offsets the overlapping logo
     alignItems: 'center' 
   },
   gymName: { 
-    fontSize: typography.h2, // 22
+    fontSize: typography.h2, 
     fontWeight: 'bold', 
-    color: colors.primaryDark, // #292929
+    color: colors.primaryDark, 
     textAlign: 'center' 
   },
   statusRow: { 
@@ -161,11 +185,11 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     paddingHorizontal: spacing.md, 
     paddingVertical: 4,
-    marginTop: spacing.sm // 8
+    marginTop: spacing.sm 
   },
   statusBadge: { 
-    fontSize: typography.small, // 14
-    color: colors.secondaryDark, // #585757
+    fontSize: typography.small, 
+    color: colors.secondaryDark, 
     marginRight: spacing.sm 
   },
   openBadge: { 
@@ -174,16 +198,16 @@ const styles = StyleSheet.create({
     color: '#2D6A4F' 
   },
   enrollButton: {
-    backgroundColor: colors.primary, // #FC6A0A
+    backgroundColor: colors.primary, 
     width: '100%',
     padding: spacing.md,
     borderRadius: 12,
     alignItems: 'center',
-    marginVertical: spacing.lg, // 24
+    marginVertical: spacing.lg, 
   },
   enrollText: { 
     color: colors.white, 
-    fontSize: typography.h3, // 18
+    fontSize: typography.h3, 
     fontWeight: 'bold' 
   },
   card: { 
@@ -199,10 +223,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   cardTitle: { 
-    fontSize: typography.body, // 16
+    fontSize: typography.body, 
     fontWeight: 'bold', 
     color: colors.primaryDark, 
-    marginBottom: spacing.xs // 4
+    marginBottom: spacing.xs 
   },
   cardBody: { 
     fontSize: typography.small, 
