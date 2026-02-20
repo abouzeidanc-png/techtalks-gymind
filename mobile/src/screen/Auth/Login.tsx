@@ -81,7 +81,11 @@ export default function Login({ navigation }: Props) {
 
       {/* Continue button */}
       <Pressable style={styles.button}>
-        <Text style={styles.buttonText}>Continue</Text>
+        <Text style={styles.buttonText}
+          onPress={() => navigation.navigate("Home")}
+        >
+          Continue
+        </Text>
       </Pressable>
 
 <Text style={styles.footer}>
