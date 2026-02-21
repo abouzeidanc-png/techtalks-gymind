@@ -18,7 +18,8 @@ const Home = () => {
                 Welcome to GymInd! 
             </Text>
             
-            <MembershipStatusPill />
+            {/* Test: "active" | "expiring" | "expired"; */}
+            <MembershipStatusPill status="expired" daysLeft={12}/>
             {/* <TopGymsCarousel /> */}
 
         </AppContainer>       
