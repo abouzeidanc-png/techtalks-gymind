@@ -48,6 +48,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin() // For development only!
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 
 // Register Controllers
 builder.Services.AddControllers()
@@ -70,10 +82,12 @@ builder.Services.AddScoped(_ => new Supabase.Client(supabaseUrl, supabaseKey));
 //Register Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IGymService, GymService>();
+builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IGymSessionService, GymSessionService>();
 builder.Services.AddHttpContextAccessor(); //Because inside NotificationService we use:  _httpContextAccessor.HttpContext.User
 builder.Services.AddScoped<INotificationService, NotificationService>();
-
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 
 
 // Swagger/OpenAPI configuration
@@ -98,7 +112,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();

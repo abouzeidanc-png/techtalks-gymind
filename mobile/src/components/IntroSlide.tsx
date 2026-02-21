@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     top: "45%",
+    bottom: "5%",
     backgroundColor: COLORS.background,
     opacity: 0.85,
     transform: [{ skewY: "-8deg" }],
@@ -107,8 +108,10 @@ const styles = StyleSheet.create({
 
   content: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 200,
+    paddingBottom: 80,
+    paddingTop: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   subtitle: {

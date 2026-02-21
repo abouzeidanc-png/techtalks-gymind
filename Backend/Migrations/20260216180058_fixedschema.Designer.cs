@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GYMIND.API.Migrations
 {
     [DbContext(typeof(SupabaseDbContext))]
-    [Migration("20260209211300_AddTwoNewColumnsToUser")]
-    partial class AddTwoNewColumnsToUser
+    [Migration("20260216180058_fixedschema")]
+    partial class fixedschema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,33 +55,43 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("GymBranchID");
 
-                    b.ToTable("announcements", (string)null);
+                    b.ToTable("announcement", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Gym", b =>
                 {
-                    b.Property<Guid>("GymId")
+                    b.Property<Guid>("GymID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("createdat")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("isapproved");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
-                    b.HasKey("GymId");
+                    b.HasKey("GymID");
 
-                    b.ToTable("gyms", (string)null);
+                    b.ToTable("gym", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymAdminAction", b =>
@@ -124,7 +134,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("gymadminactions", (string)null);
+                    b.ToTable("gymadminaction", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymBranch", b =>
@@ -134,27 +144,38 @@ namespace GYMIND.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CoverImageUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("coverimageurl");
 
                     b.Property<Guid>("GymID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymid");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("isactive");
 
                     b.Property<Guid>("LocationID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<JsonDocument>("OperatingHours")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
                     b.Property<string>("ServiceDescription")
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("servicedescription");
 
                     b.HasKey("GymBranchID");
 
@@ -162,7 +183,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("gymbranches", (string)null);
+                    b.ToTable("gymbranch", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.GymSession", b =>
@@ -182,7 +203,7 @@ namespace GYMIND.API.Migrations
                     b.Property<DateTime>("CheckInTime")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("CheckOutTime")
+                    b.Property<DateTime>("CheckOutTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GymBranchID")
@@ -203,7 +224,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("gymsessions", (string)null);
+                    b.ToTable("gymsession", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Location", b =>
@@ -237,7 +258,8 @@ namespace GYMIND.API.Migrations
                 {
                     b.Property<Guid>("MembershipID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("membershipid");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -245,28 +267,39 @@ namespace GYMIND.API.Migrations
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<Guid?>("GymBranchID")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymbranchid");
+
                     b.Property<Guid>("GymID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymid");
 
                     b.Property<bool>("IsMember")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("ismember");
 
                     b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("joinedat");
 
                     b.Property<DateTime?>("RemovedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("removedat");
 
                     b.Property<Guid>("UserID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
                     b.HasKey("MembershipID");
+
+                    b.HasIndex("GymBranchID");
 
                     b.HasIndex("GymID");
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("memberships", (string)null);
+                    b.ToTable("membership", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Notification", b =>
@@ -277,32 +310,42 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("notificationid");
 
                     b.Property<Guid?>("GymBranchID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymbranchid");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
+                    b.Property<Guid?>("GymID")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gymid");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("message");
 
                     b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("sentat");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
 
                     b.Property<Guid?>("UserID")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
                     b.HasKey("NotificationID");
 
                     b.HasIndex("GymBranchID");
 
+                    b.HasIndex("GymID");
+
                     b.HasIndex("UserID");
 
-                    b.ToTable("notifications", (string)null);
+                    b.ToTable("notification", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.Role", b =>
@@ -327,7 +370,7 @@ namespace GYMIND.API.Migrations
 
                     b.HasKey("RoleID");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("role", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.SystemAdminAction", b =>
@@ -455,8 +498,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("medicalconditions");
 
                     b.Property<Guid?>("MembershipID")
-                        .HasColumnType("uuid")
-                        .HasColumnName("membershipid");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -481,17 +523,15 @@ namespace GYMIND.API.Migrations
 
                     b.HasKey("UserID");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("GYMIND.API.Entities.UserNotification", b =>
                 {
-                    b.Property<int>("UserNotificationID")
+                    b.Property<Guid>("UserNotificationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("usernotificationid");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserNotificationID"));
 
                     b.Property<Guid>("NotificationID")
                         .HasColumnType("uuid")
@@ -508,8 +548,7 @@ namespace GYMIND.API.Migrations
                         .HasColumnName("readstatus");
 
                     b.Property<Guid>("UserID")
-                        .HasColumnType("uuid")
-                        .HasColumnName("userid");
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserNotificationID");
 
@@ -581,7 +620,7 @@ namespace GYMIND.API.Migrations
             modelBuilder.Entity("GYMIND.API.Entities.GymBranch", b =>
                 {
                     b.HasOne("GYMIND.API.Entities.Gym", "Gym")
-                        .WithMany()
+                        .WithMany("GymBranches")
                         .HasForeignKey("GymID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -618,8 +657,12 @@ namespace GYMIND.API.Migrations
 
             modelBuilder.Entity("GYMIND.API.Entities.Membership", b =>
                 {
+                    b.HasOne("GYMIND.API.Entities.GymBranch", "GymBranch")
+                        .WithMany("Memberships")
+                        .HasForeignKey("GymBranchID");
+
                     b.HasOne("GYMIND.API.Entities.Gym", "Gym")
-                        .WithMany()
+                        .WithMany("Memberships")
                         .HasForeignKey("GymID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -632,6 +675,8 @@ namespace GYMIND.API.Migrations
 
                     b.Navigation("Gym");
 
+                    b.Navigation("GymBranch");
+
                     b.Navigation("User");
                 });
 
@@ -641,9 +686,15 @@ namespace GYMIND.API.Migrations
                         .WithMany()
                         .HasForeignKey("GymBranchID");
 
+                    b.HasOne("GYMIND.API.Entities.Gym", "Gym")
+                        .WithMany()
+                        .HasForeignKey("GymID");
+
                     b.HasOne("GYMIND.API.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID");
+
+                    b.Navigation("Gym");
 
                     b.Navigation("GymBranch");
 
@@ -675,13 +726,13 @@ namespace GYMIND.API.Migrations
             modelBuilder.Entity("GYMIND.API.Entities.UserNotification", b =>
                 {
                     b.HasOne("GYMIND.API.Entities.Notification", "Notification")
-                        .WithMany()
+                        .WithMany("UserNotifications")
                         .HasForeignKey("NotificationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GYMIND.API.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("UserNotifications")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -710,6 +761,23 @@ namespace GYMIND.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GYMIND.API.Entities.Gym", b =>
+                {
+                    b.Navigation("GymBranches");
+
+                    b.Navigation("Memberships");
+                });
+
+            modelBuilder.Entity("GYMIND.API.Entities.GymBranch", b =>
+                {
+                    b.Navigation("Memberships");
+                });
+
+            modelBuilder.Entity("GYMIND.API.Entities.Notification", b =>
+                {
+                    b.Navigation("UserNotifications");
+                });
+
             modelBuilder.Entity("GYMIND.API.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
@@ -717,6 +785,8 @@ namespace GYMIND.API.Migrations
 
             modelBuilder.Entity("GYMIND.API.Entities.User", b =>
                 {
+                    b.Navigation("UserNotifications");
+
                     b.Navigation("UserRole");
                 });
 #pragma warning restore 612, 618
