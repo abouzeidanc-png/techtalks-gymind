@@ -20,7 +20,7 @@ const Home = () => {
             
             {/* Test: "active" | "expiring" | "expired"; */}
             <MembershipStatusPill status="expired" daysLeft={12}/>
-            {/* <TopGymsCarousel /> */}
+            <TopGymsCarousel />
 
         </AppContainer>       
      );
