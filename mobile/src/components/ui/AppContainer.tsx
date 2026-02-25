@@ -12,7 +12,8 @@ const AppContainer = ( {children}: AppContainerProps ) => {
             style={{ 
                 flex: 1, 
                 backgroundColor: colors.background,
-                padding: 16,
+                padding: 30,
+                paddingTop: 70,
             }}
         >
             {children}
