@@ -5,6 +5,7 @@ interface AppButtonProps {
     title: string;
     onPress: () => void;
 }
+
 const AppButton = ({ title, onPress }: AppButtonProps ) => {
     return ( 
         <Pressable 

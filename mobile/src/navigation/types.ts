@@ -1,20 +1,34 @@
-export type RootStackParamList = {
-  Splash: undefined;
-  Intro1: undefined;
-  Intro2: undefined;
-  Intro3: undefined;
-  Intro: undefined;
-  ForgotPassword: undefined;
-  Login: undefined;
-  Main: undefined;
+import type { NavigatorScreenParams } from '@react-navigation/native';
 
-  Register:
-    | {
-        selectedLocation?: string;
-      }
-    | undefined;
-
-  LocationPicker: undefined;
+export type RootStack = {
+  Boot: undefined;
+  Onboarding: undefined;
+  Auth: undefined;
+  Main: NavigatorScreenParams<TabStack> | undefined;
+  AiChat: undefined;
+  ProfileModal: NavigatorScreenParams<ProfileStack> | undefined;
+};
+export type AuthStack = {
+  Login: undefined; 
+  Register: undefined; 
+  Forgot: undefined;
+};
+export type HomeStack = {
   Home: undefined;
-  GymPage: { gymId: string };
+  GymProfile: { gymId: string };
+  CheckIn: { gymId: string };
+  Session: { gymId: string; sessionId?: string };
+  Notifications: undefined;
+};
+export type TabStack = {
+  HomeTab: NavigatorScreenParams<HomeStack> | undefined;
+  LocationTab: undefined;
+  CenterTab: undefined;
+  AITab: undefined;
+  StatsTab: undefined;
+};
+export type ProfileStack = {
+  Profile: undefined; 
+  EditProfile: undefined; 
+  Settings: undefined;
 };

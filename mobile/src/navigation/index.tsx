@@ -18,10 +18,14 @@ export default function AppNavigator() {
     <NavigationContainer>
   {/* Change initialRouteName to "GymPage" to skip everything else */}
   <Stack.Navigator 
-    initialRouteName="GymPage" 
+    initialRouteName="Intro" 
     screenOptions={{ headerShown: false }}
   >
     {/* 1. Global Screens (Accessible regardless of Auth) */}
+    <Stack.Screen name="Splash" component={Splash} />
+    <Stack.Screen name="Intro" component={IntroScreen} />
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Register" component={Register} />
     <Stack.Screen name="GymPage" component={GymPage} />
 
     {isAuthenticated ? (
@@ -31,10 +35,7 @@ export default function AppNavigator() {
       </>
     ) : (
       <>
-        <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="Intro" component={IntroScreen} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
+        
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       </>
     )}
