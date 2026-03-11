@@ -63,7 +63,8 @@ namespace GYMIND.API.Service
             {
                 Token = newAccessToken,
                 RefreshToken = newRefreshToken,
-                Roles = user.UserRole.Select(ur => ur.Role.Name).ToList()
+                Roles = user.UserRole.Select(ur => ur.Role.Name).ToList(),
+                UserID = user.UserID
             };
         }
 
@@ -91,8 +92,59 @@ namespace GYMIND.API.Service
             {
                 Token = accessToken,
                 RefreshToken = refreshToken, 
-                Roles = user.UserRole.Select(ur => ur.Role.Name).ToList()
+                Roles = user.UserRole.Select(ur => ur.Role.Name).ToList(),
+                UserID = user.UserID
             };
+        }
+
+
+        public async Task<string?> RequestPasswordResetAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail && u.IsActive);
+            if (user == null)
+                return null;
+
+            var rawToken = GenerateUrlSafeToken();
+            var hashedToken = HashToken(rawToken);
+            user.RefreshToken = $"pwdreset:{hashedToken}";
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+
+            await _context.SaveChangesAsync();
+
+            // TODO: replace with real email provider integration.
+            Console.WriteLine($"Password reset token for {user.Email}: {rawToken}");
+            return rawToken;
+        }
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordRequestDto dto)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Token) || string.IsNullOrWhiteSpace(dto.NewPassword))
+                return false;
+
+            if (!IsStrongPassword(dto.NewPassword))
+                return false;
+
+            var hashedToken = HashToken(dto.Token.Trim());
+            var expectedValue = $"pwdreset:{hashedToken}";
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.RefreshToken == expectedValue &&
+                u.RefreshTokenExpiry.HasValue &&
+                u.RefreshTokenExpiry > DateTime.UtcNow &&
+                u.IsActive);
+
+            if (user == null)
+                return false;
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.RefreshToken = null;
+            user.RefreshTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         private string GenerateRefreshToken()
@@ -101,6 +153,31 @@ namespace GYMIND.API.Service
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
+        }
+
+
+        private static string GenerateUrlSafeToken()
+        {
+            var bytes = RandomNumberGenerator.GetBytes(32);
+            return Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").TrimEnd('=');
+        }
+
+        private static string HashToken(string token)
+        {
+            var tokenBytes = System.Text.Encoding.UTF8.GetBytes(token);
+            var hashBytes = SHA256.HashData(tokenBytes);
+            return Convert.ToHexString(hashBytes);
+        }
+
+        private static bool IsStrongPassword(string password)
+        {
+            if (password.Length < 8) return false;
+            var hasUpper = password.Any(char.IsUpper);
+            var hasLower = password.Any(char.IsLower);
+            var hasDigit = password.Any(char.IsDigit);
+            var hasSpecial = password.Any(c => !char.IsLetterOrDigit(c));
+
+            return hasUpper && hasLower && hasDigit && hasSpecial;
         }
 
         public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
@@ -143,9 +220,16 @@ namespace GYMIND.API.Service
 
         public async Task<GetUserDto> CreateUserAsync(CreateUserDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            Console.WriteLine("CREATE USER: start");
+
+            Console.WriteLine("CREATE USER: checking if email exists...");
+            var exists = await _context.Users.AnyAsync(u => u.Email == dto.Email);
+            Console.WriteLine($"CREATE USER: email exists = {exists}");
+
+            if (exists)
                 throw new Exception("Email already exists");
 
+            Console.WriteLine("CREATE USER: building user entity...");
             var user = new User
             {
                 UserID = Guid.NewGuid(),
@@ -154,30 +238,41 @@ namespace GYMIND.API.Service
                 Phone = dto.Phone,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 DateOfBirth = dto.DateOfBirth.HasValue
-                    ? DateTime.SpecifyKind(dto.DateOfBirth.Value, DateTimeKind.Utc) : null,
+                    ? DateTime.SpecifyKind(dto.DateOfBirth.Value, DateTimeKind.Utc)
+                    : null,
                 Location = dto.Location,
                 Gender = dto.Gender,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
 
-            // attach role
+            Console.WriteLine("CREATE USER: attaching default role...");
             user.UserRole.Add(new UserRole
             {
                 RoleID = 2 // default to member role
             });
 
+            Console.WriteLine("CREATE USER: adding user to context...");
             _context.Users.Add(user);
 
             try
             {
+                Console.WriteLine("CREATE USER: saving changes...");
                 await _context.SaveChangesAsync();
+                Console.WriteLine("CREATE USER: save successful");
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException?.Message ?? ex.Message); // returning message to be chaanged later for better error handling and security
+                Console.WriteLine("CREATE USER: SaveChanges FAILED");
+                Console.WriteLine(ex.ToString());
                 throw;
             }
+            finally
+            {
+                Console.WriteLine("CREATE USER: SaveChanges finished (success or failure)");
+            }
+
+            Console.WriteLine("CREATE USER: preparing DTO response");
 
             return new GetUserDto
             {
@@ -186,7 +281,7 @@ namespace GYMIND.API.Service
                 Email = user.Email,
                 Phone = user.Phone,
                 CreatedAt = user.CreatedAt,
-                Roles = user.UserRole.Select(ur => ur.RoleID).ToList(),  // we will edit this later when we have proper role management
+                Roles = user.UserRole.Select(ur => ur.RoleID).ToList(),
             };
         }
 

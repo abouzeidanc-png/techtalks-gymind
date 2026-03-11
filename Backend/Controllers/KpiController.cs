@@ -19,15 +19,12 @@ namespace GYMIND.API.Controllers
         [HttpPost("branch-traffic-now")]
         public async Task<IActionResult> BranchTrafficNow([FromBody] KpiBranchTrafficNowRequestDto req)
         {
-            var rpc = await _supabase.Rpc("kpi_branch_traffic_now", new { p_gymbranchid = req.GymBranchId });
+            // Replace the previous rpc + JsonSerializer code with a typed RPC call
+            var rowsEnumerable = await _supabase.Rpc<IEnumerable<KpiBranchTrafficNowRowDto>>(
+                "kpi_branch_traffic_now",
+                new { p_gymbranchid = req.GymBranchId });
 
-        
-            var json = JsonSerializer.Serialize(rpc);
-            var rows = JsonSerializer.Deserialize<List<KpiBranchTrafficNowRowDto>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }) ?? new List<KpiBranchTrafficNowRowDto>();
-
+            var rows = rowsEnumerable?.ToList() ?? new List<KpiBranchTrafficNowRowDto>();
             if (rows.Count == 0)
                 return NotFound(new { message = "No traffic data found for this branch." });
 
